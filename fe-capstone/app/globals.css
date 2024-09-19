@@ -1,0 +1,108 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+  --darkgreen: #3C5B6F;
+  --lightgreen: #DEE3E7;
+  --lightyellow: #F9F2E7;
+  --lightgray: #F9FAFB;
+  --red: #964141;
+  --yellow: #F8F5F0;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+.bg-darkgreen {
+  background: var(--darkgreen);
+}
+
+.bg-lightgreen {
+  background: var(--lightgreen);
+}
+
+.bg-lightyellow {
+  background: var(--lightyellow);
+}
+
+.bg-lightgray {
+  background: var(--lightgray);
+}
+
+.bg-red {
+  background: var(--red);
+}
+
+.bg-yellow {
+  background: var(--yellow);
+}
+
+.text-darkgreen {
+  color: var(--darkgreen);
+}
+
+.img-logo1 {
+	width: 138px;
+	height:120px;
+}
+
+.img-logo2 {
+	width: 50px;
+	height:40px;
+}
+
+.statis {
+  width: 320px;
+	height:220px;
+  object-fit: contain;
+  margin-bottom: 0;
+}
+
+.stat {
+  width: 60px;
+	height: 60px;
+}
+
+.line {
+  width: 92%; 
+  height: 1px; 
+  background-color: #999; 
+  margin-top: 7px; 
+}
+
+.img-sidebar {
+	width: 28px;
+	height:23px;
+}
+
+.img-profile {
+	width: 38px;
+	height:38px;
+}
+
+
