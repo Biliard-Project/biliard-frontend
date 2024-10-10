@@ -1,4 +1,4 @@
-import Link from "next/link" 
+import Link from "next/link";
 
 export default function Sidebar({ isOpen, onClose }) {
   return (
@@ -13,11 +13,11 @@ export default function Sidebar({ isOpen, onClose }) {
 
       {/* Sidebar */}
       <div
-        className={`fixed top-0 left-0 h-full w-72 bg-darkgreen text-white z-50 transform ${
+        className={`fixed top-0 left-0 h-full w-64 sm:w-72 bg-darkgreen text-white z-50 transform ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         } transition-transform duration-300 ease-in-out`}
       >
-        <div className="">
+        <div>
           <div className="flex gap-5 items-center px-6 py-3">
             <img
               src="/assets/sidebar.png"
@@ -30,7 +30,7 @@ export default function Sidebar({ isOpen, onClose }) {
 
           {/* feature sidebar */}
           <div className="py-6 px-8">
-              <ul className="text-lg ">
+            <ul className="text-lg ">
               <li className="mb-7">
                 <Link href="/" className="flex items-center">
                   <img src="/assets/home.png" className="inline-block mr-5" />
@@ -39,13 +39,19 @@ export default function Sidebar({ isOpen, onClose }) {
               </li>
               <li className="mb-7">
                 <Link href="/monitoring" className="flex items-center">
-                  <img src="/assets/monitoring.png" className="inline-block mr-5" />
+                  <img
+                    src="/assets/monitoring.png"
+                    className="inline-block mr-5"
+                  />
                   Monitoring
                 </Link>
               </li>
               <li className="mb-7">
                 <Link href="/weekly-report" className="flex items-center">
-                  <img src="/assets/weekly-report.png" className="inline-block mr-5" />
+                  <img
+                    src="/assets/weekly-report.png"
+                    className="inline-block mr-5"
+                  />
                   Weekly Report
                 </Link>
               </li>
@@ -57,7 +63,6 @@ export default function Sidebar({ isOpen, onClose }) {
               </li>
             </ul>
           </div>
-          
         </div>
       </div>
     </>

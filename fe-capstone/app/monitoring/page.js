@@ -31,34 +31,35 @@ export default function Monitoring() {
   return (
     <main className="flex min-h-screen flex-col bg-white items-center">
       <Navbar2></Navbar2>
-      <div className="flex w-full px-16 mt-6 items-start justify-start">
-        <div className="text-darkgreen text-2xl font-bold">Monitoring</div>
+      <div className="flex w-full px-8 md:px-16 mt-4 md:mt-6 items-start justify-start">
+        <div className="text-darkgreen text-xl md:text-2xl font-bold">Monitoring</div>
       </div>
       <div className="line"></div>
 
-      <div className="flex w-full px-16 my-4 items-start justify-start text-gray-400">
+      <div className="flex w-full px-8 md:px-16 my-4 items-start justify-start text-gray-400">
         Tanggal Pengecekan: 21 Mei 2025
       </div>
 
-      <div className="grid grid-cols-2 px-16 gap-3.5 w-full">
-        {/* Grafik 1 */}
-        <div className="w-full p-2 h-96 bg-black">
-            {/* Grafik 1: nanti diisi grafik disini */}
-        </div>
+      {/* Grafik Section */}
+<div className="grid grid-cols-1 lg:grid-cols-2 px-8 md:px-16 gap-2 lg:gap-3.5 w-full">
+  {/* Grafik 1 */}
+  <div className="w-full p-2 h-48 lg:h-96 bg-black">
+    {/* Grafik 1: nanti diisi grafik disini */}
+  </div>
 
-        {/* Grafik 2 dan 3 */}
-        <div className="flex flex-col gap-2">
-            <div className="w-full h-1/2 bg-red">
-                {/* Grafik 2: nanti diisi grafik disini */}
-            </div>
-            <div className="w-full h-1/2 bg-darkgreen">
-                {/* Grafik 3: nanti diisi grafik disini */}
-            </div>
-        </div>
-      </div>
+  {/* Grafik 2 dan 3 */}
+  <div className="flex flex-col gap-2">
+    <div className="w-full h-48 lg:h-1/2 bg-red">
+      {/* Grafik 2: nanti diisi grafik disini */}
+    </div>
+    <div className="w-full h-48 lg:h-1/2 bg-darkgreen">
+      {/* Grafik 3: nanti diisi grafik disini */}
+    </div>
+  </div>
+</div>
 
       {/* Cards Section */}
-      <div className="grid grid-cols-4 gap-4 px-16 my-6 w-full">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 px-10 md:px-16 my-6 w-full">
         {/* Data Pasien */}
         <DataCard name={patientData.name} birthDate={patientData.birthDate} />
 
