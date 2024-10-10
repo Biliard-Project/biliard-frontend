@@ -56,14 +56,14 @@ const DataPasien = () => {
   return (
     <main className="flex min-h-screen flex-col bg-white items-center">
       <Navbar2></Navbar2>
-      <div className="flex w-full px-16 mt-6 items-start justify-start">
-        <div className="text-darkgreen text-2xl font-bold">Data Pasien</div>
+      <div className="flex w-full px-6 md:px-8 lg:px-16 mt-6 items-start justify-start">
+        <div className="text-darkgreen text-xl md:text-2xl font-bold">Data Pasien</div>
       </div>
       <div className="line"></div>
 
-      <div className="flex flex-col items-center container mt-8 mx-auto p-4">
+      <div className="flex flex-col items-center container mt-3 md:mt-8 mx-auto p-5 lg:p-4">
         {/* Tabel */}
-        <div className="w-10/12 overflow-hidden rounded-lg">
+        <div className="w-full overflow-x-auto lg:w-10/12 md:overflow-hidden rounded-lg">
           <table className="table-auto w-full">
             <thead className="bg-lightyellow">
               <tr>
@@ -104,7 +104,7 @@ const DataPasien = () => {
         </div>
 
         <button
-          className="mt-7 mx-36 px-5 py-2 bg-darkgreen text-white font-semibold rounded-xl self-start"
+          className="mt-7 md:mx-6 lg:mx-36 px-5 py-2 bg-darkgreen text-white font-semibold rounded-xl self-start"
           onClick={() => setShowModal(true)}
         >
           Add new data
@@ -114,7 +114,7 @@ const DataPasien = () => {
         {showModal ? (
             <div className="fixed z-10 inset-0 bg-white bg-opacity-50 overflow-y-auto">
                 <div className="flex items-center justify-center min-h-screen">
-                <div className="bg-white px-16 py-8 border border-gray-400 rounded-xl shadow-lg w-1/2">
+                <div className="bg-white px-8 md:px-16 py-8 border border-gray-400 rounded-xl shadow-lg w-11/12 md:w-1/2">
                     <h2 className="text-lg font-bold mb-4">
                     {isEditing ? "Edit Patient" : "Add New Patient"}
                     </h2>
@@ -207,7 +207,7 @@ const DataPasien = () => {
         {/* confirmation delete */}
         {showDeleteModal && (
           <div className="fixed z-10 inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-            <div className="bg-white p-6 rounded-xl shadow-lg">
+            <div className="bg-white mx-6 p-6 rounded-xl shadow-lg">
               <h3 className="text-lg mb-5">
                 Are you sure you want to delete this item?
               </h3>
