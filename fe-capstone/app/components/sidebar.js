@@ -1,6 +1,17 @@
 import Link from "next/link";
+import React, { useState } from 'react';
+import SearchModal from './searchModal';
 
 export default function Sidebar({ isOpen, onClose }) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [redirectToPage, setRedirectToPage] = useState("");
+
+  const openModal = (page) => {
+    setRedirectToPage(page); // Set the redirection page (monitoring or weekly-report)
+    setIsModalOpen(true); // Open modal
+  };
+
+  const closeModal = () => setIsModalOpen(false);
   return (
     <>
       {/* white overlay */}
@@ -38,22 +49,42 @@ export default function Sidebar({ isOpen, onClose }) {
                 </Link>
               </li>
               <li className="mb-7">
-                <Link href="/monitoring" className="flex items-center">
+                <a
+                  onClick={() => openModal("monitoring")} // Open modal for monitoring
+                  className="flex items-center cursor-pointer"
+                >
                   <img
                     src="/assets/monitoring.png"
                     className="inline-block mr-5"
                   />
                   Monitoring
-                </Link>
+                </a>
+                {/* <Link href="/monitoring" className="flex items-center">
+                  <img
+                    src="/assets/monitoring.png"
+                    className="inline-block mr-5"
+                  />
+                  Monitoring
+                </Link> */}
               </li>
               <li className="mb-7">
-                <Link href="/weekly-report" className="flex items-center">
+                <a
+                  onClick={() => openModal("weekly-report")} // Open modal for weekly report
+                  className="flex items-center cursor-pointer"
+                >
                   <img
                     src="/assets/weekly-report.png"
                     className="inline-block mr-5"
                   />
                   Weekly Report
-                </Link>
+                </a>
+                {/* <Link href="/weekly-report" className="flex items-center">
+                  <img
+                    src="/assets/weekly-report.png"
+                    className="inline-block mr-5"
+                  />
+                  Weekly Report
+                </Link> */}
               </li>
               <li>
                 <Link href="/data-pasien" className="flex items-center">
@@ -65,6 +96,11 @@ export default function Sidebar({ isOpen, onClose }) {
           </div>
         </div>
       </div>
+      <SearchModal 
+        isOpen={isModalOpen} 
+        onClose={closeModal} 
+        redirectToPage={redirectToPage} // Pass the redirect page
+      />
     </>
   );
 }

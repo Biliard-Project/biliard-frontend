@@ -1,6 +1,19 @@
+"use client"
+import React, { useState } from 'react';
 import Navbar2 from "./components/navbar2";
+import SearchModal from './components/searchModal';
 
 export default function Home() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [redirectToPage, setRedirectToPage] = useState("");
+
+  const openModal = (page) => {
+    setRedirectToPage(page); // Set the redirection page (monitoring or weekly-report)
+    setIsModalOpen(true); // Open modal
+  };
+
+  const closeModal = () => setIsModalOpen(false);
+  
   return (
     <main className="flex min-h-screen flex-col bg-white items-center">
       <Navbar2></Navbar2>
@@ -12,8 +25,12 @@ export default function Home() {
               <p className="mb-1.5 text-md md:text-xl">Welcome back,</p>
               <p className="font-bold text-2xl md:text-3xl mb-4">Aditya Pramudya!</p>
               <p className="text-md md:text-xl">Monitor selalu kadar bilirubin harian pasien!</p>
-              <button className="button bg-darkgreen w-44 md:w-52 rounded-3xl font-semibold text-lg md:text-xl p-2.5 mt-8 text-white cursor-pointer hover:shadow-lg hover:shadow-gray-400 hover:scale-100">
-                <a href="/monitoring">cek sekarang</a>
+              <button 
+                className="button bg-darkgreen w-44 md:w-52 rounded-3xl font-semibold text-lg md:text-xl p-2.5 mt-8 text-white cursor-pointer hover:shadow-lg hover:shadow-gray-400 hover:scale-100"
+                onClick={() => openModal("monitoring")} 
+              >
+                cek sekarang
+                {/* <a href="/monitoring">cek sekarang</a> */}
               </button>
             </div>
             <div className="flex items-end">
@@ -31,7 +48,8 @@ export default function Home() {
         {/* Feature button */}
         <div className="flex flex-col justify-center gap-10 lg:flex-row">
           <a
-            href="/monitoring"
+            href="#"
+            onClick={() => openModal("monitoring")}
             className="flex justify-center items-center gap-6 bg-lightyellow rounded-2xl shadow-lg py-6 px-10 hover:shadow-2xl transition-shadow duration-300"
           >
             <div>
@@ -40,7 +58,8 @@ export default function Home() {
             <div className="text-darkgreen text-3xl font-bold justify-start">Monitoring</div>
           </a>
           <a
-            href="/weekly-report"
+            href="#"
+            onClick={() => openModal("weekly-report")}
             className="flex justify-center items-center gap-6 bg-lightyellow rounded-2xl shadow-lg py-6 px-10 hover:shadow-2xl transition-shadow duration-300"
           >
             <div>
@@ -59,6 +78,12 @@ export default function Home() {
           </a>
         </div>
       </div>
+
+      <SearchModal 
+        isOpen={isModalOpen} 
+        onClose={closeModal} 
+        redirectToPage={redirectToPage} // Pass the redirect page prop
+      />
     </main>
   );
 }

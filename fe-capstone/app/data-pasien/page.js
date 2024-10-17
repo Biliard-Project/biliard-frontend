@@ -114,7 +114,7 @@ const DataPasien = () => {
         {showModal ? (
             <div className="fixed z-10 inset-0 bg-white bg-opacity-50 overflow-y-auto">
                 <div className="flex items-center justify-center min-h-screen">
-                <div className="bg-white px-8 md:px-16 py-8 border border-gray-400 rounded-xl shadow-lg w-11/12 md:w-1/2">
+                <div className="bg-white px-8 md:px-16 py-8 border border-gray-400 rounded-xl shadow-lg w-11/12 md:w-9/12 lg:w-1/2">
                     <h2 className="text-lg font-bold mb-4">
                     {isEditing ? "Edit Patient" : "Add New Patient"}
                     </h2>
