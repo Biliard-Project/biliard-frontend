@@ -27,21 +27,16 @@ export default function UserLogin() {
     formBody.append("password", password);
   
     try {
-      const response = await fetch(`https://biliard-backend.dundorma.dev/signup`, {
+      const response = await fetch(`https://biliard-backend.dundorma.dev/signin`, {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded", 
         },
         body: formBody.toString(), 
       });
-  
-      if (!response.ok) {
-        throw new Error("Login failed. Please check your email and password.");
-      }
-  
-      const data = await response.json();
-      console.log("Login successful", data);
-  
+      console.log("test");
+      
+      console.log("Login successful");
       // Simpan token atau lakukan tindakan lanjutan
       // localStorage.setItem("token", data.token);
       // router.push("/dashboard");
