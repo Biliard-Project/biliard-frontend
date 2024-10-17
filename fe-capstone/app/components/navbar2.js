@@ -37,7 +37,9 @@ export default function Navbar2() {
               onClick={toggleSidebar}
               alt="Sidebar Icon"
             />
-            <div className="text-white font-semibold text-2xl">BiliarD</div>
+            <div className="text-white font-semibold text-2xl">
+              <a href="/" className="flex items-center">BiliarD</a>
+            </div>
           </div>
 
           {/* Profile */}

@@ -7,15 +7,49 @@ import Head from "next/head";
 
 export default function UserLogin() {
   const [userInfo, setUserInfo] = useState({
-    username: "",
+    email: "",
     password: "",
   });
-  const {username, password} = userInfo;
+  const {email, password} = userInfo;
   const [isPasswordHidden, setIsPasswordHidden] = useState(true);
+  const [errorMessage, setErrorMessage] = useState("");
+
   const handleChange = ({target}) => {
     const {name, value} = target;
     setUserInfo({...userInfo, [name]: value});
   };
+
+  const handleLogin = async (userInfo) => {
+    const { email, password } = userInfo; 
+  
+    const formBody = new URLSearchParams(); 
+    formBody.append("email", email);
+    formBody.append("password", password);
+  
+    try {
+      const response = await fetch(`https://biliard-backend.dundorma.dev/signup`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded", 
+        },
+        body: formBody.toString(), 
+      });
+  
+      if (!response.ok) {
+        throw new Error("Login failed. Please check your email and password.");
+      }
+  
+      const data = await response.json();
+      console.log("Login successful", data);
+  
+      // Simpan token atau lakukan tindakan lanjutan
+      // localStorage.setItem("token", data.token);
+      // router.push("/dashboard");
+    } catch (error) {
+      setErrorMessage(error.message);
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     handleLogin(userInfo);
@@ -49,22 +83,25 @@ export default function UserLogin() {
               <h2 className="text-3xl text-purple font-bold mt-11 mb-3">Welcome back!</h2>
             </div>
             <p className="text-gray-400 mb-10">login into your account</p>
+
+            {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+
             <form
               onSubmit={handleSubmit}
               className="flex flex-col lg:px-5 xl:px-16"
             >
               <div className="flex flex-col gap-8">
                 <div className="flex flex-col gap-2">
-                  <label className="font-semibold text-left">Username</label>
+                  <label className="font-semibold text-left">Email</label>
                   <div>
                     <input
-                      type="username"
+                      type="email"
                       onChange={handleChange}
-                      value={username}
-                      name="username"
-                      label="Username"
+                      value={email}
+                      name="email"
+                      label="Email"
                       className="border-2 border-main-black/20 focus:border-dark-green-1 focus:outline-none rounded-2xl px-6 py-3 w-full bg-gray-100"
-                      placeholder="Enter username"
+                      placeholder="Enter email"
                       required
                     />
                   </div>
