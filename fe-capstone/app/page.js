@@ -1,11 +1,26 @@
 "use client"
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Navbar2 from "./components/navbar2";
 import SearchModal from './components/searchModal';
+import Cookies from 'js-cookie';
 
 export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [redirectToPage, setRedirectToPage] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login status
+  const router = useRouter();
+
+  useEffect(() => {
+    // Check for a session token in cookies or localStorage (or replace this with your own auth check)
+    const session = Cookies.get('session');
+    if (session) {
+      setIsLoggedIn(true); // User is logged in
+    } else {
+      setIsLoggedIn(false); // User is not logged in
+      router.push("/login"); // Redirect to login page
+    }
+  }, []);
 
   const openModal = (page) => {
     setRedirectToPage(page); // Set the redirection page (monitoring or weekly-report)
@@ -13,8 +28,17 @@ export default function Home() {
   };
 
   const closeModal = () => setIsModalOpen(false);
+
+  // Show a loading state while checking login status
+  if (isLoggedIn === null) {
+    return <div>Loading...</div>; // Or replace with a loading spinner
+  }
+
+  // If the user is not logged in, the router will redirect to the login page
+  if (!isLoggedIn) return null; 
   
   return (
+
     <main className="flex min-h-screen flex-col bg-white items-center">
       <Navbar2></Navbar2>
       <div className="flex flex-col gap-14 w-10/12 mx-14 my-12 lg:mx-24 lg:w-9/12">
