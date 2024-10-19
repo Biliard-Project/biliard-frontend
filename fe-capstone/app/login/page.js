@@ -4,8 +4,12 @@ import {FiEye, FiEyeOff} from "react-icons/fi";
 import {useState} from "react";
 import Link from "next/link";
 import Head from "next/head";
+import Cookies from 'js-cookie';
+import { useRouter } from 'next/navigation';
 
 export default function UserLogin() {
+  const Router = useRouter();
+
   const [userInfo, setUserInfo] = useState({
     email: "",
     password: "",
@@ -34,12 +38,20 @@ export default function UserLogin() {
         },
         body: formBody.toString(), 
       });
-      console.log("test");
+      console.log(response);
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Login gagal');
+      }
       
+      let data = await response.json()
+      let session_cookie = data.session
+      Cookies.set("session", session_cookie)
+      console.log(data)
       console.log("Login successful");
-      // Simpan token atau lakukan tindakan lanjutan
-      // localStorage.setItem("token", data.token);
-      // router.push("/dashboard");
+      console.log(Cookies.get("session"))
+      Router.push('/')
     } catch (error) {
       setErrorMessage(error.message);
     }

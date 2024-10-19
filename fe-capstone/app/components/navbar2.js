@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation"; 
 import Sidebar from "./sidebar"; 
+import Cookies from 'js-cookie';
 
 export default function Navbar2() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -22,6 +23,10 @@ export default function Navbar2() {
   };
 
   const handleLogout = () => {
+    Cookies.remove("session");
+    console.log("Session cookie removed");
+
+    // Redirect ke halaman login
     router.push("/login");
   };
 
