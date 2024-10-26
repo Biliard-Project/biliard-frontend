@@ -6,15 +6,44 @@ const SearchModal = ({ isOpen, onClose, redirectToPage }) => {
   const [inputValue, setInputValue] = useState("");
   const [filteredPatients, setFilteredPatients] = useState([]);
   const [noData, setNoData] = useState(false);
+  const [patients, setPatients] = useState([]); 
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null); 
   const router = useRouter(); // Initialize router
 
   // Dummy data pasien
-  const patients = [
-    { id: 1, name: "Adi Budi Cahyana" },
-    { id: 2, name: "Sarah Jelita" },
-    { id: 3, name: "Dewi Rahmawati" },
-    { id: 4, name: "Pramudya Aditya" }
-  ];
+  // const patients = [
+  //   { id: 1, name: "Adi Budi Cahyana" },
+  //   { id: 2, name: "Sarah Jelita" },
+  //   { id: 3, name: "Dewi Rahmawati" },
+  //   { id: 4, name: "Pramudya Aditya" }
+  // ];
+
+  useEffect(() => {
+    const fetchPatients = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await fetch("https://biliard-backend.dundorma.dev/patients", {
+          method: 'GET',
+          redirect: 'follow'
+        });
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json(); 
+        setPatients(data); // Set data pasien
+      } catch (err) {
+        console.error('Error fetching patients:', err);
+        setError('Gagal mengambil data pasien.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPatients();
+  }, []);
+
 
   useEffect(() => {
     if (inputValue === "") {
@@ -33,7 +62,7 @@ const SearchModal = ({ isOpen, onClose, redirectToPage }) => {
 
       setFilteredPatients(filtered);
     }
-  }, [inputValue]);
+  }, [inputValue, patients]);
   
   const handlePatientClick = (patient) => {
     // Redirect to the appropriate page with patient info
@@ -62,8 +91,12 @@ const SearchModal = ({ isOpen, onClose, redirectToPage }) => {
           />
 
           {/* Display filtered patients or no data message */}
-          <div className="mt-2 px-2">
-            {filteredPatients.length > 0 ? (
+          <div className="mt-2 px-2" style={{ maxHeight: '200px', overflowY: 'auto' }}>
+            {loading ?(
+              <div className="text-center text-gray-800">Loading...</div>
+            ) : error ? (
+              <div className="text-center text-red-500">{error}</div>
+            ) : filteredPatients.length > 0 ? (
               <ul>
                 {filteredPatients.map((patient) => (
                   <li
@@ -82,7 +115,8 @@ const SearchModal = ({ isOpen, onClose, redirectToPage }) => {
                   Add new data
                 </a>
               </div>
-            ) : null}
+            ) : null }
+            
           </div>
         </div>
       </div>
