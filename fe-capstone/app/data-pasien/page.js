@@ -1,6 +1,7 @@
+// data pasien yang bisa
 "use client"
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navbar2 from "../components/navbar2";
 
 const DataPasien = () => {
@@ -12,13 +13,32 @@ const DataPasien = () => {
     name: "",
     gender: "",
     birthdate: "",
-    testDate: "",
     description: ""
   });
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteIndex, setDeleteIndex] = useState(null);
 
- 
+  // Fetch patient data
+  useEffect(() => {
+    const requestOptions = {
+      method: 'GET',
+      redirect: 'follow'
+    };
+
+    fetch("https://biliard-backend.dundorma.dev/patients", requestOptions)
+      .then(response => response.json())
+      .then(result => {
+        const formattedPatients = result.map(patient => ({
+          name: patient.name,
+          gender: patient.gender,
+          birthdate: patient.birth_date.split(" ")[0], // Keep only the date part
+          description: patient.keterangan
+        }));
+        setPatients(formattedPatients);
+      })
+      .catch(error => console.log('Error fetching patients:', error));
+  }, []);
+
   const handleAddOrEditPatient = () => {
     if (isEditing) {
       const updatedPatients = [...patients];
@@ -29,9 +49,8 @@ const DataPasien = () => {
     }
     setShowModal(false);
     setIsEditing(false);
-    setNewPatient({ name: "", gender: "", birthdate: "", testDate: "", description: "" });
+    setNewPatient({ name: "", gender: "", birthdate: "", description: "" });
   };
-
 
   const confirmDelete = (index) => {
     setDeleteIndex(index);
@@ -44,7 +63,6 @@ const DataPasien = () => {
     setShowDeleteModal(false);
     setDeleteIndex(null);
   };
-
 
   const handleEdit = (index) => {
     setEditIndex(index);
@@ -62,7 +80,6 @@ const DataPasien = () => {
       <div className="line"></div>
 
       <div className="flex flex-col items-center container mt-3 md:mt-8 mx-auto p-5 lg:p-4">
-        {/* Tabel */}
         <div className="w-full overflow-x-auto lg:w-10/12 md:overflow-hidden rounded-lg">
           <table className="table-auto w-full">
             <thead className="bg-lightyellow">
@@ -70,7 +87,6 @@ const DataPasien = () => {
                 <th className="border px-4 py-2 rounded-tl-lg">Nama</th>
                 <th className="border px-4 py-2">Jenis Kelamin</th>
                 <th className="border px-4 py-2">Tanggal Lahir</th>
-                <th className="border px-4 py-2">Tanggal Test</th>
                 <th className="border px-4 py-2">Keterangan</th>
                 <th className="border px-4 py-2 rounded-tr-lg">Actions</th>
               </tr>
@@ -78,7 +94,7 @@ const DataPasien = () => {
             <tbody className="bg-lightgray">
               {patients.length === 0 ? (
                 <tr>
-                  <td colSpan="6" className="text-center py-4">No Data</td>
+                  <td colSpan="5" className="text-center py-4">No Data</td>
                 </tr>
               ) : (
                 patients.map((patient, index) => (
@@ -86,7 +102,6 @@ const DataPasien = () => {
                     <td className="border px-4 py-2">{patient.name}</td>
                     <td className="border px-4 py-2">{patient.gender}</td>
                     <td className="border px-4 py-2">{patient.birthdate}</td>
-                    <td className="border px-4 py-2">{patient.testDate}</td>
                     <td className="border px-4 py-2">{patient.description}</td>
                     <td className="border py-2 flex justify-center items-center gap-5">
                       <button onClick={() => handleEdit(index)}>
@@ -110,101 +125,86 @@ const DataPasien = () => {
           Add new data
         </button>
 
-        {/* form data pasien */}
-        {showModal ? (
-            <div className="fixed z-10 inset-0 bg-white bg-opacity-50 overflow-y-auto">
-                <div className="flex items-center justify-center min-h-screen">
-                <div className="bg-white px-8 md:px-16 py-8 border border-gray-400 rounded-xl shadow-lg w-11/12 md:w-9/12 lg:w-1/2">
-                    <h2 className="text-lg font-bold mb-4">
-                    {isEditing ? "Edit Patient" : "Add New Patient"}
-                    </h2>
+        {showModal && (
+          <div className="fixed z-10 inset-0 bg-white bg-opacity-50 overflow-y-auto">
+            <div className="flex items-center justify-center min-h-screen">
+              <div className="bg-white px-8 md:px-16 py-8 border border-gray-400 rounded-xl shadow-lg w-11/12 md:w-9/12 lg:w-1/2">
+                <h2 className="text-lg font-bold mb-4">
+                  {isEditing ? "Edit Patient" : "Add New Patient"}
+                </h2>
+                <label className="block mb-2">Nama</label>
+                <input
+                  type="text"
+                  placeholder="Nama"
+                  className="border p-2 mb-4 w-full"
+                  value={newPatient.name}
+                  onChange={(e) =>
+                    setNewPatient({ ...newPatient, name: e.target.value })
+                  }
+                />
 
-                    {/* Form Input Fields */}
-                    <label className="block mb-2">Nama</label>
-                    <input
-                    type="text"
-                    placeholder="Nama"
-                    className="border p-2 mb-4 w-full"
-                    value={newPatient.name}
-                    onChange={(e) =>
-                        setNewPatient({ ...newPatient, name: e.target.value })
-                    }
-                    />
+                <label className="block mb-2">Jenis Kelamin</label>
+                <select
+                  className={`border p-2 mb-4 w-full ${newPatient.gender === "" ? "text-gray-500" : "text-black"}`}
+                  value={newPatient.gender}
+                  onChange={(e) =>
+                    setNewPatient({ ...newPatient, gender: e.target.value })
+                  }
+                >
+                  <option value="" className="text-gray-500">Pilih Jenis Kelamin</option>
+                  <option value="Laki-laki">Laki-laki</option>
+                  <option value="Perempuan">Perempuan</option>
+                </select>
 
-                    <label className="block mb-2">Jenis Kelamin</label>
-                    <select
-                    className={`border p-2 mb-4 w-full ${newPatient.gender === "" ? "text-gray-500" : "text-black"}`}
-                    value={newPatient.gender}
-                    onChange={(e) =>
-                        setNewPatient({ ...newPatient, gender: e.target.value })
-                    }
-                    >
-                    <option value="" className="text-gray-500">Pilih Jenis Kelamin</option>
-                    <option value="Laki-laki">Laki-laki</option>
-                    <option value="Perempuan">Perempuan</option>
-                    </select>
+                <label className="block mb-2">Tanggal Lahir</label>
+                <input
+                  type="date"
+                  className={`border p-2 mb-4 w-full ${newPatient.birthdate === "" ? "text-gray-500" : "text-black"}`}
+                  value={newPatient.birthdate}
+                  onChange={(e) =>
+                    setNewPatient({ ...newPatient, birthdate: e.target.value })
+                  }
+                />
 
-                    <label className="block mb-2">Tanggal Lahir</label>
-                    <input
-                    type="date"
-                    className={`border p-2 mb-4 w-full ${newPatient.birthdate === "" ? "text-gray-500" : "text-black"}`}
-                    value={newPatient.birthdate}
-                    onChange={(e) =>
-                        setNewPatient({ ...newPatient, birthdate: e.target.value })
-                    }
-                    />
+                <label className="block mb-2">Keterangan</label>
+                <input
+                  type="text"
+                  placeholder="Keterangan"
+                  className="border p-2 mb-4 w-full"
+                  value={newPatient.description}
+                  onChange={(e) =>
+                    setNewPatient({ ...newPatient, description: e.target.value })
+                  }
+                />
 
-                    <label className="block mb-2">Tanggal Test</label>
-                    <input
-                    type="date"
-                    className={`border p-2 mb-4 w-full ${newPatient.testDate === "" ? "text-gray-500" : "text-black"}`}
-                    value={newPatient.testDate}
-                    onChange={(e) =>
-                        setNewPatient({ ...newPatient, testDate: e.target.value })
-                    }
-                    />
-
-                    <label className="block mb-2">Keterangan</label>
-                    <input
-                    type="text"
-                    placeholder="Keterangan"
-                    className="border p-2 mb-4 w-full"
-                    value={newPatient.description}
-                    onChange={(e) =>
-                        setNewPatient({ ...newPatient, description: e.target.value })
-                    }
-                    />
-
-                    <div className="flex justify-end">
-                    <button
-                        className="bg-red text-white px-3 py-1.5 rounded-xl mr-2 font-semibold"
-                        onClick={() => {
-                        setShowModal(false);
-                        setIsEditing(false);
-                        setNewPatient({
-                            name: "",
-                            gender: "",
-                            birthdate: "",
-                            testDate: "",
-                            description: "",
-                        });
-                        }}
-                    >
-                        Cancel
-                    </button>
-                    <button
-                        className="bg-darkgreen text-white px-5 py-1.5 rounded-xl mr-2 font-semibold"
-                        onClick={handleAddOrEditPatient}
-                    >
-                        {isEditing ? "Save" : "Add"}
-                    </button>
-                    </div>
+                <div className="flex justify-end">
+                  <button
+                    className="bg-red text-white px-3 py-1.5 rounded-xl mr-2 font-semibold"
+                    onClick={() => {
+                      setShowModal(false);
+                      setIsEditing(false);
+                      setNewPatient({
+                        name: "",
+                        gender: "",
+                        birthdate: "",
+                        description: "",
+                      });
+                    }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className="bg-darkgreen text-white px-5 py-1.5 rounded-xl mr-2 font-semibold"
+                    onClick={handleAddOrEditPatient}
+                  >
+                    {isEditing ? "Save" : "Add"}
+                  </button>
                 </div>
-                </div>
+              </div>
             </div>
-        ) : null}
+          </div>
+        )}
 
-        {/* confirmation delete */}
         {showDeleteModal && (
           <div className="fixed z-10 inset-0 bg-black bg-opacity-50 flex justify-center items-center">
             <div className="bg-white mx-6 p-6 rounded-xl shadow-lg">
