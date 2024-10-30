@@ -29,9 +29,10 @@ const DataPasien = () => {
       .then(response => response.json())
       .then(result => {
         const formattedPatients = result.map(patient => ({
+          id: patient.id,
           name: patient.name,
           gender: patient.gender,
-          birthdate: patient.birth_date.split(" ")[0], // Keep only the date part
+          birthdate: patient.birth_date.split(" ")[0], 
           description: patient.keterangan
         }));
         setPatients(formattedPatients);
@@ -40,28 +41,90 @@ const DataPasien = () => {
   }, []);
 
   const handleAddOrEditPatient = () => {
+    const requestOptions = {
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: newPatient.name,
+        gender: newPatient.gender,
+        birth_date: `${newPatient.birthdate} 00:00:00`,
+        keterangan: newPatient.description
+      })
+    };
+  
     if (isEditing) {
-      const updatedPatients = [...patients];
-      updatedPatients[editIndex] = newPatient;
-      setPatients(updatedPatients);
+      // PUT request untuk mengedit pasien berdasarkan ID pasien yang sebenarnya
+      requestOptions.method = 'PUT';
+      fetch(`https://biliard-backend.dundorma.dev/patients/${patients[editIndex].id}`, requestOptions)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Failed to update patient');
+          }
+          return response.json();
+        })
+        .then( result => {
+          // Perbarui data pasien dalam state setelah berhasil edit
+          const updatedPatients = [...patients];
+          updatedPatients[editIndex] = newPatient;
+          setPatients(updatedPatients);
+          resetForm();
+        })
+        .catch(error => console.error('Error updating patient:', error));
     } else {
-      setPatients([...patients, newPatient]);
+      // POST request untuk menambah pasien baru
+      requestOptions.method = 'POST';
+      fetch("https://biliard-backend.dundorma.dev/patients", requestOptions)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Failed to add patient');
+          }
+          return response.json();
+        })
+        .then(newPatientData => {
+          // Tambahkan pasien baru ke dalam state setelah berhasil tambah
+          setPatients([...patients, newPatientData]);
+          resetForm();
+        })
+        .catch(error => console.error('Error adding patient:', error));
     }
-    setShowModal(false);
-    setIsEditing(false);
-    setNewPatient({ name: "", gender: "", birthdate: "", description: "" });
   };
+  
+  const handleDelete = () => {
+    const patientToDelete = patients[deleteIndex];
+    const patientId = patientToDelete.id;
+  
+    const requestOptions = {
+      method: 'DELETE',
+      redirect: 'follow',
+      mode: "no-cors"
+    };
+  
+    fetch(`https://biliard-backend.dundorma.dev/patients/${patientId}`, requestOptions)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to delete patient');
+        }
+        return response.json();
+      })
+      .then(result => {
+        if (result.message === "success") {
+          // Remove the deleted patient from the state
+          const updatedPatients = patients.filter((_, i) => i !== deleteIndex);
+          setPatients(updatedPatients);
+          setShowDeleteModal(false);
+          setDeleteIndex(null);
+        } else {
+          throw new Error('Deletion was not successful');
+        }
+      })
+      .catch(error => {
+        console.log('Error deleting patient:', error);
+        // Optionally, handle the error in the UI
+      });
+  };  
 
   const confirmDelete = (index) => {
     setDeleteIndex(index);
     setShowDeleteModal(true);
-  };
-
-  const handleDelete = () => {
-    const updatedPatients = patients.filter((_, i) => i !== deleteIndex);
-    setPatients(updatedPatients);
-    setShowDeleteModal(false);
-    setDeleteIndex(null);
   };
 
   const handleEdit = (index) => {

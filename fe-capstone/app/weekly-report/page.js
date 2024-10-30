@@ -16,6 +16,8 @@ import {
   ResponsiveContainer
 } from "recharts";
 import dayjs from "dayjs";
+import isoWeek from "dayjs/plugin/isoWeek";
+dayjs.extend(isoWeek);
 
 export default function WeeklyReport() {
   const searchParams = useSearchParams();
@@ -24,18 +26,9 @@ export default function WeeklyReport() {
   const [recordsData, setRecordsData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-    // temporary data dummy
-    // const patientData = {
-    //     name: "Sarah Jelita",
-    //     birthDate: "27 Juni 2000",
-    //     gender: "Laki-laki"
-    //   };
-    
-    //   const summaryText = (
-    //     <>
-    //       <p>Kadar bilirubin Anda selama seminggu ini menunjukkan fluktuasi yang berada dalam rentang normal. Rata-rata kadar bilirubin anda 0.80 mg/dL, dengan kadar tertinggi sebesar 0.90 mg/dL dan kadar terendah sebesar 0.70 mg/dL.</p>
-    //     </>
-    //   );
+  const [weeks, setWeeks] = useState([]);
+  const [selectedWeek, setSelectedWeek] = useState(null);
+  
     useEffect(() => {
       if (!patientId) {
         setError("No patient selected.");
@@ -86,6 +79,38 @@ export default function WeeklyReport() {
       fetchPatientData();
       fetchRecordsData();
     }, [patientId]);
+
+    useEffect(() => {
+      if (recordsData.length > 0) {
+        // Urutkan data berdasarkan tanggal
+        const sortedRecords = recordsData.sort((a, b) => dayjs(a.test_date).isBefore(dayjs(b.test_date)) ? -1 : 1);
+        const startDate = dayjs(sortedRecords[0].test_date).startOf('week'); // Mulai dari hari Minggu
+        const endDate = dayjs(sortedRecords[sortedRecords.length - 1].test_date).endOf('week'); // Sampai hari Sabtu
+  
+        const generatedWeeks = [];
+        let currentStart = startDate;
+  
+        while (currentStart.isBefore(endDate)) {
+          const currentEnd = currentStart.endOf('week');
+          generatedWeeks.push({
+            label: `${currentStart.format("DD MMM YYYY")} - ${currentEnd.format("DD MMM YYYY")}`,
+            start: currentStart,
+            end: currentEnd
+          });
+          currentStart = currentStart.add(1, 'week');
+        }
+  
+        setWeeks(generatedWeeks);
+        setSelectedWeek(generatedWeeks[generatedWeeks.length - 1]); // Set default selectedWeek to the latest week
+      }
+    }, [recordsData]);
+
+    const filteredRecordsData = selectedWeek
+    ? recordsData.filter(record => {
+        const testDate = dayjs(record.test_date);
+        return testDate.isAfter(selectedWeek.start.subtract(1, 'day')) && testDate.isBefore(selectedWeek.end.add(1, 'day'));
+      })
+    : recordsData;
   
     // change data records format for Recharts
     const formatRecordsData = (data) => {
@@ -148,8 +173,30 @@ export default function WeeklyReport() {
       </div>
       <div className="line"></div>
 
-      <div className="flex w-full px-6 md:px-16 my-4 items-start justify-start text-gray-400">
+      {/* <div className="flex w-full px-6 md:px-16 my-4 items-start justify-start text-gray-400">
         Periode: 13 Mei 2024 - 20 Mei 2024
+      </div> */}
+
+      {/* Dropdown Periode */}
+      <div className="flex w-full px-6 md:px-16 my-4 items-center justify-start text-gray-400">
+        <div className="mr-3">
+          Periode : 
+        </div>
+        <select
+          className="border border-gray-300 rounded-md p-2"
+          value={selectedWeek ? selectedWeek.label : ""}
+          onChange={(e) => {
+            const week = weeks.find(w => w.label === e.target.value);
+            setSelectedWeek(week);
+          }}
+        >
+          <option value="" disabled>Pilih Periode</option>
+          {weeks.map((week) => (
+            <option key={week.label} value={week.label}>
+              {week.label}
+            </option>
+          ))}
+        </select>
       </div>
       
        {/* Grafik weekly report */}
@@ -171,7 +218,7 @@ export default function WeeklyReport() {
 
         {/* Grafik 2 dan 3 */}
         <div className="flex flex-col gap-2">
-          <div className="w-full h-48 lg:h-1/2 bg-redbg-white rounded-lg shadow-lg p-2">
+          <div className="w-full h-48 lg:h-1/2 bg-white rounded-lg shadow-lg p-2">
             {/* Grafik Heart Rate */}
             <h3 className="text-darkgreen text-center mb-2">Grafik Heart Rate (bpm)</h3>
             <ResponsiveContainer width="100%" height="85%">
