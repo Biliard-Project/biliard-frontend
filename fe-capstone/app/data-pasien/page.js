@@ -1,8 +1,8 @@
-// data pasien yang bisa
 "use client"
-
 import { useState, useEffect } from "react";
 import Navbar2 from "../components/navbar2";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 
 const DataPasien = () => {
   const [showModal, setShowModal] = useState(false);
@@ -44,6 +44,7 @@ const DataPasien = () => {
     const requestOptions = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
+        id: isEditing ? patients[editIndex].id : undefined, // Add id if editing
         name: newPatient.name,
         gender: newPatient.gender,
         birth_date: `${newPatient.birthdate} 00:00:00`,
@@ -52,25 +53,29 @@ const DataPasien = () => {
     };
   
     if (isEditing) {
-      // PUT request untuk mengedit pasien berdasarkan ID pasien yang sebenarnya
       requestOptions.method = 'PUT';
-      fetch(`https://biliard-backend.dundorma.dev/patients/${patients[editIndex].id}`, requestOptions)
+      fetch(`https://biliard-backend.dundorma.dev/patients`, requestOptions)
         .then(response => {
           if (!response.ok) {
             throw new Error('Failed to update patient');
           }
           return response.json();
         })
-        .then( result => {
-          // Perbarui data pasien dalam state setelah berhasil edit
+        .then(() => {
+          // Update patient data in the state after successful edit
           const updatedPatients = [...patients];
-          updatedPatients[editIndex] = newPatient;
+          updatedPatients[editIndex] = { 
+            ...newPatient, 
+            id: patients[editIndex].id,
+            birthdate: newPatient.birthdate,
+            description: newPatient.description
+          };
           setPatients(updatedPatients);
           resetForm();
+          setShowModal(false);
         })
         .catch(error => console.error('Error updating patient:', error));
     } else {
-      // POST request untuk menambah pasien baru
       requestOptions.method = 'POST';
       fetch("https://biliard-backend.dundorma.dev/patients", requestOptions)
         .then(response => {
@@ -80,13 +85,32 @@ const DataPasien = () => {
           return response.json();
         })
         .then(newPatientData => {
-          // Tambahkan pasien baru ke dalam state setelah berhasil tambah
-          setPatients([...patients, newPatientData]);
+          const formattedPatient = {
+            id: newPatientData.id,
+            name: newPatientData.name,
+            gender: newPatientData.gender,
+            birthdate: newPatientData.birth_date.split(" ")[0],
+            description: newPatientData.keterangan
+          };
+          setPatients([...patients, formattedPatient]);
           resetForm();
+          setShowModal(false);
         })
         .catch(error => console.error('Error adding patient:', error));
     }
   };
+  
+  //reset form after submitting form
+  const resetForm = () => {
+    setNewPatient({
+      name: "",
+      gender: "",
+      birthdate: "",
+      description: ""
+    });
+    setEditIndex(null);
+    setIsEditing(false);
+  };  
   
   const handleDelete = () => {
     const patientToDelete = patients[deleteIndex];
@@ -94,8 +118,7 @@ const DataPasien = () => {
   
     const requestOptions = {
       method: 'DELETE',
-      redirect: 'follow',
-      mode: "no-cors"
+      redirect: 'follow'
     };
   
     fetch(`https://biliard-backend.dundorma.dev/patients/${patientId}`, requestOptions)
@@ -118,7 +141,6 @@ const DataPasien = () => {
       })
       .catch(error => {
         console.log('Error deleting patient:', error);
-        // Optionally, handle the error in the UI
       });
   };  
 
@@ -132,6 +154,51 @@ const DataPasien = () => {
     setNewPatient(patients[index]);
     setIsEditing(true);
     setShowModal(true);
+  };
+
+   // Function to generate PDF patient records
+   const handleDownloadPdf = async (patientId) => {
+    try {
+      // Find the patient's name and birthdate from the patients state
+      const patient = patients.find((p) => p.id === patientId);
+      const patientName = patient ? patient.name : "Unknown";
+      const patientBirthdate = patient ? patient.birthdate : "Unknown";
+  
+      const response = await fetch(`https://biliard-backend.dundorma.dev/records/patient/${patientId}`);
+      if (!response.ok) throw new Error('Failed to fetch patient records');
+      
+      const records = await response.json();
+      const doc = new jsPDF();
+      
+      // Patient identitiy
+      doc.setFontSize(14);
+      doc.text("Patient Records", 14, 15);
+      doc.setFontSize(11);
+      doc.text(`Nama: ${patientName}`, 14, 25);
+      doc.text(`Tanggal Lahir: ${patientBirthdate}`, 14, 32);
+  
+      // Table headers and rows
+      const tableColumn = ["Date", "Bilirubin", "Oxygen Saturation", "Heart Rate"];
+      const tableRows = records.map(record => [
+        record.test_date,
+        record.bilirubin,
+        record.oxygen,
+        record.heart_rate,
+      ]);
+  
+      // Add table to PDF
+      doc.autoTable({
+        head: [tableColumn],
+        body: tableRows,
+        startY: 40,
+        headStyles: { fillColor: [60, 91, 111] },
+      });
+  
+      // Save the PDF
+      doc.save(`Patient_${patientId}_Records.pdf`);
+    } catch (error) {
+      console.error('Error downloading PDF:', error);
+    }
   };
 
   return (
@@ -172,6 +239,9 @@ const DataPasien = () => {
                       </button>
                       <button onClick={() => confirmDelete(index)}>
                         <img src="/assets/delete.png" alt="Delete" className="h-7 w-7" />
+                      </button>
+                      <button onClick={() => handleDownloadPdf(patient.id)}>
+                        <img src="/assets/download3.png" alt="Download" className="h-7 w-7" />
                       </button>
                     </td>
                   </tr>
