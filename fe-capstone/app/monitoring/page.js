@@ -3,8 +3,6 @@
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation"; 
 import Navbar2 from "../components/navbar2";
-import DataCard from "../components/dataCard"; // Komponen yang diimpor
-import SummaryCard from "../components/summaryCard";
 import {
   LineChart,
   Line,
@@ -137,41 +135,14 @@ export default function Monitoring() {
     );
   }
 
-  // Menghitung rata-rata, tertinggi, dan terendah bilirubin
-  const averageBilirubin = formattedRecordsData.reduce((acc, curr) => acc + curr.bilirubin, 0) / formattedRecordsData.length;
-  const maxBilirubin = Math.max(...formattedRecordsData.map(d => d.bilirubin));
-  const minBilirubin = Math.min(...formattedRecordsData.map(d => d.bilirubin));
+  // Get the latest test date
+  const latestRecordDate = recordsData.length > 0 
+  ? dayjs(recordsData[recordsData.length - 1].test_date).format("DD MMMM YYYY")
+  : dayjs().format("DD MMMM YYYY");
 
-  // Menghitung rata-rata, tertinggi, dan terendah heart rate
-  const averageHeartRate = formattedRecordsData.reduce((acc, curr) => acc + curr.heartRate, 0) / formattedRecordsData.length;
-  const maxHeartRate = Math.max(...formattedRecordsData.map(d => d.heartRate));
-  const minHeartRate = Math.min(...formattedRecordsData.map(d => d.heartRate));
-
-  // Menghitung rata-rata, tertinggi, dan terendah oxygen saturation
-  const averageOxygen = formattedRecordsData.reduce((acc, curr) => acc + curr.oxygenSaturation, 0) / formattedRecordsData.length;
-  const maxOxygen = Math.max(...formattedRecordsData.map(d => d.oxygenSaturation));
-  const minOxygen = Math.min(...formattedRecordsData.map(d => d.oxygenSaturation));
-
-  // const summaryText = (
-  //   <>
-  //     <p>
-  //       Kadar bilirubin Anda selama seminggu ini menunjukkan fluktuasi yang berada dalam rentang normal. 
-  //       Rata-rata kadar bilirubin Anda adalah <strong>{averageBilirubin.toFixed(2)} mg/dL</strong>, 
-  //       dengan kadar tertinggi sebesar <strong>{maxBilirubin.toFixed(2)} mg/dL</strong> 
-  //       dan kadar terendah sebesar <strong>{minBilirubin.toFixed(2)} mg/dL</strong>.
-  //     </p>
-  //     <p className="mt-2">
-  //       Heart Rate Anda rata-rata adalah <strong>{averageHeartRate.toFixed(2)} bpm</strong>, 
-  //       dengan nilai tertinggi sebesar <strong>{maxHeartRate} bpm</strong> 
-  //       dan terendah sebesar <strong>{minHeartRate} bpm</strong>.
-  //     </p>
-  //     <p className="mt-2">
-  //       Saturasi Oksigen Anda rata-rata adalah <strong>{averageOxygen.toFixed(2)}%</strong>, 
-  //       dengan nilai tertinggi sebesar <strong>{maxOxygen}%</strong> 
-  //       dan terendah sebesar <strong>{minOxygen}%</strong>.
-  //     </p>
-  //   </>
-  // );
+  const latestBilirubin = formattedRecordsData.length > 0 ? formattedRecordsData[formattedRecordsData.length - 1].bilirubin : null;
+  const latestHeartRate = formattedRecordsData.length > 0 ? formattedRecordsData[formattedRecordsData.length - 1].heartRate : null;
+  const latestOxygen = formattedRecordsData.length > 0 ? formattedRecordsData[formattedRecordsData.length - 1].oxygenSaturation : null;
 
   return (
     <main className="flex min-h-screen flex-col bg-white items-center">
@@ -182,19 +153,22 @@ export default function Monitoring() {
       <div className="line"></div>
 
       <div className="flex w-full px-8 md:px-16 my-4 items-start justify-start text-gray-400">
-        Tanggal Pengecekan: {dayjs().format("DD MMMM YYYY")}
+        Tanggal Pengecekan: {latestRecordDate}
       </div>
 
       {/* Grafik Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 px-8 md:px-16 gap-2 lg:gap-3.5 w-full">
         {/* Grafik Bilirubin */}
-        <div className="w-full p-2 h-96 bg-white rounded-lg shadow-lg">
-          <h3 className="text-darkgreen text-center mb-2">Grafik Bilirubin (mg/dL)</h3>
+        <div className="w-full p-2 h-auto bg-white rounded-lg shadow-lg">
+          <h3 className="text-darkgreen font-semibold text-center mb-2">Grafik Bilirubin (mg/dL)</h3>
           <ResponsiveContainer width="100%" height="85%">
             <LineChart data={formattedRecordsData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#ccc" />
               <XAxis dataKey="timestamp" />
-              <YAxis domain={[0, Math.ceil(maxBilirubin * 1.2)]} />
+              <YAxis 
+                domain={['dataMin - 0.1', 'dataMax + 0.1' ]}  
+                tickFormatter={(value) => value.toFixed(2)} 
+              />
               <Tooltip />
               <Legend />
               <Line type="monotone" dataKey="bilirubin" stroke="#8884d8" activeDot={{ r: 8 }} />
@@ -206,12 +180,12 @@ export default function Monitoring() {
         <div className="flex flex-col gap-2">
           {/* Grafik Heart Rate */}
           <div className="w-full h-48 lg:h-1/2 bg-white rounded-lg shadow-lg p-2">
-            <h3 className="text-darkgreen text-center mb-2">Grafik Heart Rate (bpm)</h3>
+            <h3 className="text-darkgreen font-semibold text-center mb-2">Grafik Heart Rate (bpm)</h3>
             <ResponsiveContainer width="100%" height="85%">
               <LineChart data={formattedRecordsData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#ccc" />
                 <XAxis dataKey="timestamp" />
-                <YAxis domain={[Math.floor(minHeartRate * 0.8), Math.ceil(maxHeartRate * 1.2)]} />
+                <YAxis domain={['dataMin', 'dataMax' ]} />
                 <Tooltip />
                 <Legend />
                 <Line type="monotone" dataKey="heartRate" stroke="#82ca9d" activeDot={{ r: 8 }} />
@@ -221,12 +195,12 @@ export default function Monitoring() {
 
           {/* Grafik Oxygen Saturation */}
           <div className="w-full h-48 lg:h-1/2 bg-white rounded-lg shadow-lg p-2">
-            <h3 className="text-darkgreen text-center mb-2">Grafik Saturasi Oksigen (%)</h3>
+            <h3 className="text-darkgreen font-semibold text-center mb-2">Grafik Saturasi Oksigen (%)</h3>
             <ResponsiveContainer width="100%" height="85%">
               <LineChart data={formattedRecordsData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#ccc" />
                 <XAxis dataKey="timestamp" />
-                <YAxis domain={[Math.floor(minOxygen * 0.8), Math.ceil(maxOxygen * 1.2)]} />
+                <YAxis domain={['dataMin', 'dataMax' ]} />
                 <Tooltip />
                 <Legend />
                 <Line type="monotone" dataKey="oxygenSaturation" stroke="#ffc658" activeDot={{ r: 8 }} />
@@ -247,17 +221,17 @@ export default function Monitoring() {
 
         {/* Bilirubin */}
         <Card title="Bilirubin (mg/dL)">
-          {averageBilirubin.toFixed(2)}
+          {latestBilirubin !== null ? latestBilirubin.toFixed(2) : "N/A"}
         </Card>
 
         {/* Heart Rate */}
         <Card title="Heart Rate (bpm)">
-          {averageHeartRate.toFixed(2)}
+          {latestHeartRate !== null ? latestHeartRate.toFixed(2) : "N/A"}
         </Card>
 
         {/* Saturasi O2 */}
         <Card title="Saturasi O₂ (%)">
-          {averageOxygen.toFixed(2)}
+          {latestOxygen !== null ? latestOxygen.toFixed(2) : "N/A"}
         </Card>
       </div>
     </main>

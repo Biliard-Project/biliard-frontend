@@ -105,20 +105,38 @@ export default function WeeklyReport() {
       }
     }, [recordsData]);
 
-    const filteredRecordsData = selectedWeek
-    ? recordsData.filter(record => {
-        const testDate = dayjs(record.test_date);
-        return testDate.isAfter(selectedWeek.start.subtract(1, 'day')) && testDate.isBefore(selectedWeek.end.add(1, 'day'));
-      })
-    : recordsData;
+    // const filteredRecordsData = selectedWeek
+    // ? recordsData.filter(record => {
+    //     const testDate = dayjs(record.test_date);
+    //     return testDate.isAfter(selectedWeek.start.subtract(1, 'day')) && testDate.isBefore(selectedWeek.end.add(1, 'day'));
+    //   })
+    // : recordsData;
+
+    const getBilirubinStatus = (bilirubinLevel, testDate) => {
+      const ageInHours = dayjs(testDate).diff(dayjs(patientData.birth_date), 'hour');
+    
+      if (ageInHours <= 24 && bilirubinLevel < 5) {
+        return "Normal";
+      } else if (ageInHours > 24 && ageInHours <= 48 && bilirubinLevel < 10) {
+        return "Normal";
+      } else if (ageInHours > 48 && ageInHours <= 72 && bilirubinLevel < 12) {
+        return "Normal";
+      } else if (ageInHours > 72 && bilirubinLevel < 15) {
+        return "Normal";
+      } else {
+        return "High";
+      }
+    };
   
     // change data records format for Recharts
     const formatRecordsData = (data) => {
       return data.map(record => ({
         timestamp: dayjs(record.test_date).format("DD MMM HH:mm"),
+        date: dayjs(record.test_date).format("DD MMM"),  
         bilirubin: record.bilirubin,
         heartRate: record.heart_rate,
-        oxygenSaturation: record.oxygen
+        oxygenSaturation: record.oxygen,
+        bilirubinStatus: getBilirubinStatus(record.bilirubin, record.test_date)
       }));
     };
   
@@ -148,6 +166,11 @@ export default function WeeklyReport() {
         </main>
       );
     }
+
+    const classifyBilirubinFluctuation = () => {
+      const highReadings = formattedRecordsData.filter(record => record.bilirubinStatus === "High").length;
+      return highReadings === 0 ? "normal" : "melebihi rentang normal";
+    };
   
     // count average, min and max bilirubin
     const averageBilirubin = formattedRecordsData.reduce((acc, curr) => acc + curr.bilirubin, 0) / formattedRecordsData.length;
@@ -157,7 +180,7 @@ export default function WeeklyReport() {
     const summaryText = (
       <>
         <p>
-          Kadar bilirubin Anda selama seminggu ini menunjukkan fluktuasi yang berada dalam rentang normal. 
+          Kadar bilirubin Anda selama seminggu ini menunjukkan fluktuasi yang berada dalam rentang {classifyBilirubinFluctuation()}. 
           Rata-rata kadar bilirubin anda {averageBilirubin.toFixed(2)} mg/dL, 
           dengan kadar tertinggi sebesar {maxBilirubin.toFixed(2)} mg/dL 
           dan kadar terendah sebesar {minBilirubin.toFixed(2)} mg/dL.
@@ -200,15 +223,18 @@ export default function WeeklyReport() {
       </div>
       
        {/* Grafik weekly report */}
-       <div className="grid grid-cols-1 lg:grid-cols-2 px-8 md:px-16 gap-2 lg:gap-3.5 w-full">
+       <div className="grid grid-cols-1 lg:grid-cols-2 px-8 md:px-16 gap-2.5 lg:gap-3.5 w-full">
         {/* Grafik Bilirubin */}
-        <div className="w-full p-2 h-96 bg-white rounded-lg shadow-lg">
-          <h3 className="text-darkgreen text-center mb-2">Grafik Bilirubin (mg/dL)</h3>
-          <ResponsiveContainer width="100%" height="85%">
+        <div className="w-full py-0.5 px-2 h-auto bg-white rounded-lg shadow-lg">
+          <h3 className="text-darkgreen font-semibold text-center mb-2">Grafik Bilirubin (mg/dL)</h3>
+          <ResponsiveContainer width="100%" height="90%">
             <LineChart data={formattedRecordsData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#ccc" />
-              <XAxis dataKey="timestamp" />
-              <YAxis domain={[0, 1.2]} />
+              <XAxis dataKey="timestamp"/>
+              <YAxis 
+                domain={['dataMin - 0.1', 'dataMax + 0.1' ]}  
+                tickFormatter={(value) => value.toFixed(2)}
+              />
               <Tooltip />
               <Legend />
               <Line type="monotone" dataKey="bilirubin" stroke="#8884d8" activeDot={{ r: 8 }} />
@@ -217,15 +243,15 @@ export default function WeeklyReport() {
         </div>
 
         {/* Grafik 2 dan 3 */}
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2.5">
           <div className="w-full h-48 lg:h-1/2 bg-white rounded-lg shadow-lg p-2">
             {/* Grafik Heart Rate */}
-            <h3 className="text-darkgreen text-center mb-2">Grafik Heart Rate (bpm)</h3>
+            <h3 className="text-darkgreen font-semibold text-center mb-2">Grafik Heart Rate (bpm)</h3>
             <ResponsiveContainer width="100%" height="85%">
               <LineChart data={formattedRecordsData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#ccc" />
                 <XAxis dataKey="timestamp" />
-                <YAxis domain={[50, 110]} />
+                <YAxis domain={['dataMin', 'dataMax' ]} />
                 <Tooltip />
                 <Legend />
                 <Line type="monotone" dataKey="heartRate" stroke="#82ca9d" activeDot={{ r: 8 }} />
@@ -235,12 +261,12 @@ export default function WeeklyReport() {
 
           <div className="w-full h-48 lg:h-1/2 bg-white rounded-lg shadow-lg p-2">
             {/* Grafik Oxygen Saturation */}
-            <h3 className="text-darkgreen text-center mb-2">Grafik Saturasi Oksigen (%)</h3>
+            <h3 className="text-darkgreen font-semibold text-center mb-2">Grafik Saturasi Oksigen (%)</h3>
             <ResponsiveContainer width="100%" height="85%">
               <LineChart data={formattedRecordsData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#ccc" />
                 <XAxis dataKey="timestamp" />
-                <YAxis domain={[85, 105]} />
+                <YAxis domain={['dataMin', 'dataMax' ]} />
                 <Tooltip />
                 <Legend />
                 <Line type="monotone" dataKey="oxygenSaturation" stroke="#ffc658" activeDot={{ r: 8 }} />
