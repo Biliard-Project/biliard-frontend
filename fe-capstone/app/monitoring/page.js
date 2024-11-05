@@ -3,35 +3,87 @@
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation"; 
 import Navbar2 from "../components/navbar2";
+import { Tooltip as ReactTooltip } from 'react-tooltip';
 import {
   LineChart,
   Line,
   XAxis,
   YAxis,
   CartesianGrid,
-  Tooltip,
+  Tooltip as RechartsTooltip,
   Legend,
   ResponsiveContainer
 } from "recharts";
 import dayjs from "dayjs";
+// import duration from 'dayjs/plugin/duration'; // Remove if not using
+// dayjs.extend(duration); // Remove if not using
 
-// Card Component
-const Card = ({ title, children }) => {
+// StatusCard Component
+const StatusCard = ({ title, value, getStatus, additionalParams = {} }) => {
+  const status = value !== null ? getStatus(value, additionalParams) : '';
+
+  // Determine text color based on status
+  let colorClass = "text-darkgreen"; // Default color for "Normal"
+  if (status !== "Normal") {
+    colorClass = "text-red-500"; // Red for any non-normal status
+  }
+
   return (
     <div className="bg-lightgreen p-4 rounded-xl shadow-md w-full text-center">
-      <h3 className="text-lg font-bold text-darkgreen mb-2">{title}</h3>
-      <div className="text-5xl font-bold text-darkgreen">{children}</div>
+      <h3 className="text-lg font-bold text-darkgreen mb-2 md:mb-4 lg:mb-2">{title}</h3>
+      <div
+        className={`text-4xl lg:text-5xl font-bold ${colorClass}`}
+        data-tooltip-content={status !== '' ? status : ''}
+        data-tooltip-id={`${title}Tooltip`}
+      >
+        {value !== null ? value.toFixed(2) : "N/A"}
+      </div>
+      {status !== '' && (
+        <ReactTooltip id={`${title}Tooltip`} place="top" />
+      )}
     </div>
   );
 };
 
-// Component Data Pasien (Renamed to PatientDataCard)
+// Status Functions
+const getBilirubinStatus = (bilirubinLevel, { ageInHours }) => {
+  if (ageInHours <= 24 && bilirubinLevel < 5) {
+    return "Normal";
+  } else if (ageInHours > 24 && ageInHours <= 48 && bilirubinLevel < 10) {
+    return "Normal";
+  } else if (ageInHours > 48 && ageInHours <= 72 && bilirubinLevel < 12) {
+    return "Normal";
+  } else if (ageInHours > 72 && bilirubinLevel < 15) {
+    return "Normal";
+  } else {
+    return "Melebihi batas normal";
+  }
+};
+
+const getHeartRateStatus = (heartRate) => {
+  if (heartRate >= 70 && heartRate <= 160) {
+    return "Normal";
+  } else if (heartRate < 70) {
+    return "Dibawah batas normal";
+  }
+  return "Melebihi batas normal";
+};
+
+const getOxygenSaturationStatus = (oxygenSaturation) => {
+  if (oxygenSaturation >= 93) {
+    return "Normal";
+  } else if (oxygenSaturation < 93) {
+    return "Dibawah batas normal";
+  }
+  return "Melebihi batas normal";
+};
+
 const PatientDataCard = ({ name, birthDate }) => {
   return (
     <div className="bg-lightgreen p-4 rounded-xl shadow-md w-full">
       <h3 className="text-lg font-bold text-darkgreen mb-2">Data Pasien</h3>
-      <p className="mb-1"><span>Nama Lengkap:</span> {name}</p>
-      <p className="mb-1"><span>Tanggal Lahir:</span> {birthDate}</p>
+      <p className="md:text-sm lg:text-lg mb-1"><span>Nama Lengkap:</span> {name}</p>
+      <p className="md:text-sm lg:text-lg mb-1"><span>Tanggal Lahir:</span> {birthDate}</p>
     </div>
   );
 };
@@ -96,7 +148,7 @@ export default function Monitoring() {
     fetchRecordsData();
   }, [patientId]);
 
-  // change data records format for Recharts
+  // Change data records format for Recharts
   const formatRecordsData = (data) => {
     if (!Array.isArray(data) || data.length === 0) return [];
 
@@ -126,7 +178,7 @@ export default function Monitoring() {
     );
   }
 
-  // check patient
+  // Check patient
   if (!patientData) {
     return (
       <main className="flex min-h-screen flex-col bg-white items-center justify-center">
@@ -136,9 +188,19 @@ export default function Monitoring() {
   }
 
   // Get the latest test date
-  const latestRecordDate = recordsData.length > 0 
-  ? dayjs(recordsData[recordsData.length - 1].test_date).format("DD MMMM YYYY")
-  : dayjs().format("DD MMMM YYYY");
+  const latestRecord = recordsData.length > 0 ? recordsData[recordsData.length - 1] : null;
+  const latestRecordDate = latestRecord 
+    ? dayjs(latestRecord.test_date).format("DD MMMM YYYY")
+    : dayjs().format("DD MMMM YYYY");
+
+  // Calculate ageInHours based on latestRecord.test_date and patientData.birth_date
+  let ageInHours = null;
+  if (latestRecord) {
+    const birthDate = dayjs(patientData.birth_date);
+    const testDate = dayjs(latestRecord.test_date);
+    const diffInHours = testDate.diff(birthDate, 'hour');
+    ageInHours = diffInHours >= 0 ? diffInHours : null; // Ensure non-negative
+  }
 
   const latestBilirubin = formattedRecordsData.length > 0 ? formattedRecordsData[formattedRecordsData.length - 1].bilirubin : null;
   const latestHeartRate = formattedRecordsData.length > 0 ? formattedRecordsData[formattedRecordsData.length - 1].heartRate : null;
@@ -159,9 +221,9 @@ export default function Monitoring() {
       {/* Grafik Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 px-8 md:px-16 gap-2 lg:gap-3.5 w-full">
         {/* Grafik Bilirubin */}
-        <div className="w-full p-2 h-auto bg-white rounded-lg shadow-lg">
+        <div className="w-full py-2 h-48 md:h-72 lg:h-auto bg-white rounded-lg shadow-lg">
           <h3 className="text-darkgreen font-semibold text-center mb-2">Grafik Bilirubin (mg/dL)</h3>
-          <ResponsiveContainer width="100%" height="85%">
+          <ResponsiveContainer width="100%" height="90%">
             <LineChart data={formattedRecordsData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#ccc" />
               <XAxis dataKey="timestamp" />
@@ -169,7 +231,7 @@ export default function Monitoring() {
                 domain={['dataMin - 0.1', 'dataMax + 0.1' ]}  
                 tickFormatter={(value) => value.toFixed(2)} 
               />
-              <Tooltip />
+              <RechartsTooltip />
               <Legend />
               <Line type="monotone" dataKey="bilirubin" stroke="#8884d8" activeDot={{ r: 8 }} />
             </LineChart>
@@ -179,14 +241,14 @@ export default function Monitoring() {
         {/* Grafik Heart Rate dan Oxygen Saturation */}
         <div className="flex flex-col gap-2">
           {/* Grafik Heart Rate */}
-          <div className="w-full h-48 lg:h-1/2 bg-white rounded-lg shadow-lg p-2">
+          <div className="w-full h-48 md:h-72 lg:h-1/2 bg-white rounded-lg shadow-lg px-1 py-2">
             <h3 className="text-darkgreen font-semibold text-center mb-2">Grafik Heart Rate (bpm)</h3>
             <ResponsiveContainer width="100%" height="85%">
               <LineChart data={formattedRecordsData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#ccc" />
                 <XAxis dataKey="timestamp" />
                 <YAxis domain={['dataMin', 'dataMax' ]} />
-                <Tooltip />
+                <RechartsTooltip />
                 <Legend />
                 <Line type="monotone" dataKey="heartRate" stroke="#82ca9d" activeDot={{ r: 8 }} />
               </LineChart>
@@ -194,14 +256,14 @@ export default function Monitoring() {
           </div>
 
           {/* Grafik Oxygen Saturation */}
-          <div className="w-full h-48 lg:h-1/2 bg-white rounded-lg shadow-lg p-2">
+          <div className="w-full h-48 md:h-72 lg:h-1/2 bg-white rounded-lg shadow-lg px-1 py-2">
             <h3 className="text-darkgreen font-semibold text-center mb-2">Grafik Saturasi Oksigen (%)</h3>
             <ResponsiveContainer width="100%" height="85%">
               <LineChart data={formattedRecordsData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#ccc" />
                 <XAxis dataKey="timestamp" />
                 <YAxis domain={['dataMin', 'dataMax' ]} />
-                <Tooltip />
+                <RechartsTooltip />
                 <Legend />
                 <Line type="monotone" dataKey="oxygenSaturation" stroke="#ffc658" activeDot={{ r: 8 }} />
               </LineChart>
@@ -216,23 +278,29 @@ export default function Monitoring() {
         <PatientDataCard 
           name={patientData.name} 
           birthDate={dayjs(patientData.birth_date).format("DD MMM YYYY")} 
-          gender={patientData.gender} 
         />
 
         {/* Bilirubin */}
-        <Card title="Bilirubin (mg/dL)">
-          {latestBilirubin !== null ? latestBilirubin.toFixed(2) : "N/A"}
-        </Card>
+        <StatusCard 
+          title="Bilirubin (mg/dL)"
+          value={latestBilirubin}
+          getStatus={getBilirubinStatus}
+          additionalParams={{ ageInHours }}
+        />
 
         {/* Heart Rate */}
-        <Card title="Heart Rate (bpm)">
-          {latestHeartRate !== null ? latestHeartRate.toFixed(2) : "N/A"}
-        </Card>
+        <StatusCard 
+          title="Heart Rate (bpm)"
+          value={latestHeartRate}
+          getStatus={getHeartRateStatus}
+        />
 
         {/* Saturasi O2 */}
-        <Card title="Saturasi O₂ (%)">
-          {latestOxygen !== null ? latestOxygen.toFixed(2) : "N/A"}
-        </Card>
+        <StatusCard 
+          title="Saturasi O₂ (%)"
+          value={latestOxygen}
+          getStatus={getOxygenSaturationStatus}
+        />
       </div>
     </main>
   );

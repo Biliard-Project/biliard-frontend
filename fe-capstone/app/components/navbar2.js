@@ -33,7 +33,7 @@ export default function Navbar2() {
   return (
     <>
       {/* Navbar */}
-      <div className="bg-darkgreen w-full px-6 py-2 flex items-center">
+      <div className="bg-darkgreen w-full px-6 py-2 flex items-center fixed top-0 left-0 z-50">
         <div className="flex w-full justify-between items-center">
           <div className="flex items-center gap-4">
             <img
@@ -69,6 +69,9 @@ export default function Navbar2() {
             )}
           </div>
         </div>
+      </div>
+      <div className="h-12">
+
       </div>
 
       {/* Sidebar */}

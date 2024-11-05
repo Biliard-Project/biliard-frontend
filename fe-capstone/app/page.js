@@ -2,22 +2,23 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Navbar2 from "./components/navbar2";
+import Footer from './components/footer';
 import SearchModal from './components/searchModal';
 import Cookies from 'js-cookie';
 
 export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [redirectToPage, setRedirectToPage] = useState("");
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login status
+  const [isLoggedIn, setIsLoggedIn] = useState(false); 
   const router = useRouter();
 
   useEffect(() => {
     // Check for a session token in cookies or localStorage (or replace this with your own auth check)
     const session = Cookies.get('session');
     if (session) {
-      setIsLoggedIn(true); // User is logged in
+      setIsLoggedIn(true); 
     } else {
-      setIsLoggedIn(false); // User is not logged in
+      setIsLoggedIn(false); 
       router.push("/login"); // Redirect to login page
     }
   }, []);
@@ -41,7 +42,7 @@ export default function Home() {
 
     <main className="flex min-h-screen flex-col bg-white items-center">
       <Navbar2></Navbar2>
-      <div className="flex flex-col gap-14 w-10/12 mx-14 my-12 lg:mx-24 lg:w-9/12">
+      <div className="flex flex-col gap-14 w-10/12 mx-14 my-12 lg:my-14 lg:mx-24 lg:w-9/12">
         {/* light green area */}
         <div className="bg-lightgreen rounded-3xl shadow-xl">
           <div className="flex justify-between">
@@ -70,7 +71,7 @@ export default function Home() {
         </div>
 
         {/* Feature button */}
-        <div className="flex flex-col justify-center gap-10 lg:flex-row">
+        <div className="flex flex-col mb-20 justify-center gap-10 lg:flex-row">
           <a
             href="#"
             onClick={() => openModal("monitoring")}
@@ -106,8 +107,9 @@ export default function Home() {
       <SearchModal 
         isOpen={isModalOpen} 
         onClose={closeModal} 
-        redirectToPage={redirectToPage} // Pass the redirect page prop
+        redirectToPage={redirectToPage} 
       />
+      <Footer></Footer>
     </main>
   );
 }

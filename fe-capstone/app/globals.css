@@ -66,6 +66,14 @@ body {
   color: var(--darkgreen);
 }
 
+.text-red {
+  color: var(--red);
+}
+
+.text-yellow {
+  color: var(--yellow);
+}
+
 .img-logo1 {
 	width: 138px;
 	height:120px;
@@ -74,6 +82,11 @@ body {
 .img-logo2 {
 	width: 50px;
 	height:40px;
+}
+
+.img-logo3 {
+	width: 80px;
+	height:70px;
 }
 
 .statis {
@@ -105,4 +118,13 @@ body {
 	height:38px;
 }
 
+.img-lp {
+  width: 270px;
+	height:270px;
+}
+
+.img-foot {
+  width: 260px;
+	height:260px;
+}
 
