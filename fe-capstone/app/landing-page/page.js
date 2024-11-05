@@ -1,5 +1,5 @@
 "use client"
-import Navbar2 from "../components/navbar2";
+import Navbar1 from "../components/navbar1";
 import Footer from '../components/footer';
 import FeatureSection from "../components/featureSection";
 
@@ -7,7 +7,7 @@ export default function landingPage() {
   return (
 
     <main className="flex min-h-screen flex-col bg-white items-center">
-        <Navbar2></Navbar2>
+        <Navbar1></Navbar1>
         <div className="flex flex-row items-center justify-between bg-lightgreen w-full py-14 px-20">
           {/* light green */}
           <div className="flex flex-col w-8/12">
