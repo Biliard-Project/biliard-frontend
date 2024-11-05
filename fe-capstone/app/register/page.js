@@ -20,7 +20,6 @@ export default function UserRegister() {
   };
 
   const handleRegister = async (userInfo) => {
-    // console.log(process.env.NEXT_PUBLIC_BILIARD_API_URL); 
     const { name, email, password } = userInfo;
 
     const formBody = new URLSearchParams();
@@ -29,7 +28,6 @@ export default function UserRegister() {
     formBody.append("password", password);
 
     try {
-      // const response = await fetch(`${process.env.BILIARD_API_URL}/signup`, {
       const response = await fetch(`http://20.189.124.237/signup`, {
         method: "POST",
         headers: {
@@ -69,11 +67,14 @@ export default function UserRegister() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
       <Head>
-        <title>Rental Bahari | Register</title>
+        <title>BiliarD | Register</title>
       </Head>
-      <main className="bg-reg-bg bg-cover flex-row flex items-center justify-center w-full flex-1 py-100 text-center">
+      <main 
+        className="bg-reg-bg bg-cover lg:bg-[center_50%] bg-[left_50%] flex-col lg:flex-row flex items-center justify-center w-full flex-1 py-100 text-center"
+        // style={{ backgroundPosition: 'left top 100%' }}
+      >
         {/* Logo section */}
-        <div className="w-1/2 p-5 flex flex-col items-center justify-center">
+        <div className="hidden lg:flex w-1/2 p-5 flex-col items-center justify-center">
           <img src="/assets/logo.png" className="img-logo1 mb-5 " alt="Logo" />
           <div className="py-2">
             <h2 className="text-5xl font-bold text-white mt-7 mb-7">BiliarD</h2>
@@ -81,21 +82,24 @@ export default function UserRegister() {
         </div>
 
         {/* Regis section */}
-        <div className="bg-white min-h-screen w-6/12 flex flex-col justify-center">
+        <div className="bg-white md:py-12 lg:py-0 lg:min-h-screen w-11/12 md:w-9/12 lg:w-6/12 flex flex-col justify-center rounded-3xl lg:rounded-none">
           <div className="py-reg">
-            <h2 className="text-3xl font-bold text-purple mt-8 mb-4">Welcome to Beat Task!</h2>
-            <div className="text-neutral-800 text-xs mb-8">
+            <h2 className="text-2xl md:text-3xl font-bold text-darkgreen md:text-black mt-8 mb-4">Welcome to BiliarD!</h2>
+            <div className="hidden text-neutral-800 text-xs mb-8 lg:block">
               <p className="">Create an account to get started with Biliard.</p>
               <p>Stay healthy, Stay sane!</p>
+            </div>
+            <div className="text-neutral-800 px-10 text-xs mb-8 lg:hidden">
+              BiliarD, platform inovatif deteksi kadar bilirubin secara non-invasif!
             </div>
           </div>
 
           {errorMessage && <p className="text-red-500">{errorMessage}</p>} {/* Display error message */}
 
-          <form onSubmit={handleSubmit} className="flex flex-col px-20 md:px-28 lg:px-36 xl:px-44">
-            <div className="flex flex-col gap-4">
+          <form onSubmit={handleSubmit} className="flex flex-col px-12 md:px-28 lg:px-36 xl:px-44">
+            <div className="flex flex-col gap-2 md:gap-5">
               <div className="flex flex-col gap-1">
-                <label className="font-medium text-base text-left">Name</label>
+                <label className="font-medium text-sm md:text-base text-left">Name</label>
                 <div>
                   <input
                     type="name"
@@ -109,7 +113,7 @@ export default function UserRegister() {
                 </div>
               </div>
               <div className="flex flex-col gap-2">
-                <label className="font-medium text-base text-left">Email</label>
+                <label className="font-medium text-sm md:text-base text-left">Email</label>
                 <div className="relative">
                   <input
                     onChange={handleChange}
@@ -122,7 +126,7 @@ export default function UserRegister() {
                 </div>
               </div>
               <div className="flex flex-col gap-2">
-                <label className="font-medium text-base text-left">Password</label>
+                <label className="font-medium text-sm md:text-base text-left">Password</label>
                 <div className="relative">
                   <input
                     onChange={handleChange}
@@ -135,7 +139,7 @@ export default function UserRegister() {
                 </div>
               </div>
               <div className="flex flex-col gap-3">
-                <label className="font-medium text-base text-left">Confirm Password</label>
+                <label className="font-medium text-sm md:text-base text-left">Confirm Password</label>
                 <div className="relative">
                   <input
                     onChange={handleChange}
@@ -155,7 +159,7 @@ export default function UserRegister() {
               </button>
             </div>
             <div className="flex items-center justify-center text-xs mb-4">
-              <span>Don&apos;t have an account?&nbsp;</span>
+              <span>Already have an account?&nbsp;</span>
               <Link href="/login" className="underline">
                 Sign in
               </Link>

@@ -28,26 +28,32 @@ const DataPasien = () => {
     fetch("https://biliard-backend.dundorma.dev/patients", requestOptions)
       .then(response => response.json())
       .then(result => {
-        const formattedPatients = result.map(patient => ({
-          id: patient.id,
-          name: patient.name,
-          gender: patient.gender,
-          birthdate: patient.birth_date.split(" ")[0], 
-          description: patient.keterangan
-        }));
+        const formattedPatients = result.map(patient => {
+          const [date, time] = patient.birth_date.split(" ");
+          return {
+            id: patient.id,
+            name: patient.name,
+            gender: patient.gender,
+            birthdate: date,
+            birthtime: time ? time.substring(0,5) : "", 
+            description: patient.keterangan
+          };
+        });
         setPatients(formattedPatients);
       })
       .catch(error => console.log('Error fetching patients:', error));
   }, []);
 
   const handleAddOrEditPatient = () => {
+    const formattedBirthDateTime = `${newPatient.birthdate} ${newPatient.birthtime}:00`; // Format: YYYY-MM-DD HH:MM:SS
+
     const requestOptions = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        id: isEditing ? patients[editIndex].id : undefined, // Add id if editing
+        id: isEditing ? patients[editIndex].id : undefined,
         name: newPatient.name,
         gender: newPatient.gender,
-        birth_date: `${newPatient.birthdate} 00:00:00`,
+        birth_date: formattedBirthDateTime,
         keterangan: newPatient.description
       })
     };
@@ -68,6 +74,7 @@ const DataPasien = () => {
             ...newPatient, 
             id: patients[editIndex].id,
             birthdate: newPatient.birthdate,
+            birthtime: newPatient.birthtime,
             description: newPatient.description
           };
           setPatients(updatedPatients);
@@ -85,11 +92,13 @@ const DataPasien = () => {
           return response.json();
         })
         .then(newPatientData => {
+          const [date, time] = newPatientData.birth_date.split(" ");
           const formattedPatient = {
             id: newPatientData.id,
             name: newPatientData.name,
             gender: newPatientData.gender,
-            birthdate: newPatientData.birth_date.split(" ")[0],
+            birthdate: date,
+            birthtime: time ? time.substring(0,5) : "",
             description: newPatientData.keterangan
           };
           setPatients([...patients, formattedPatient]);
@@ -106,6 +115,7 @@ const DataPasien = () => {
       name: "",
       gender: "",
       birthdate: "",
+      birthtime: "",
       description: ""
     });
     setEditIndex(null);
@@ -151,7 +161,10 @@ const DataPasien = () => {
 
   const handleEdit = (index) => {
     setEditIndex(index);
-    setNewPatient(patients[index]);
+    setNewPatient({
+      ...patients[index],
+      birthtime: patients[index].birthtime || ""
+    });
     setIsEditing(true);
     setShowModal(true);
   };
@@ -163,6 +176,7 @@ const DataPasien = () => {
       const patient = patients.find((p) => p.id === patientId);
       const patientName = patient ? patient.name : "Unknown";
       const patientBirthdate = patient ? patient.birthdate : "Unknown";
+      const patientBirthtime = patient ? patient.birthtime : "Unknown";
   
       const response = await fetch(`https://biliard-backend.dundorma.dev/records/patient/${patientId}`);
       if (!response.ok) throw new Error('Failed to fetch patient records');
@@ -176,6 +190,7 @@ const DataPasien = () => {
       doc.setFontSize(11);
       doc.text(`Nama: ${patientName}`, 14, 25);
       doc.text(`Tanggal Lahir: ${patientBirthdate}`, 14, 32);
+      doc.text(`Waktu Lahir: ${patientBirthtime}`, 14, 39);
   
       // Table headers and rows
       const tableColumn = ["Date", "Bilirubin", "Oxygen Saturation", "Heart Rate"];
@@ -217,6 +232,7 @@ const DataPasien = () => {
                 <th className="border px-4 py-2 rounded-tl-lg">Nama</th>
                 <th className="border px-4 py-2">Jenis Kelamin</th>
                 <th className="border px-4 py-2">Tanggal Lahir</th>
+                <th className="border px-4 py-2">Waktu Lahir</th>
                 <th className="border px-4 py-2">Keterangan</th>
                 <th className="border px-4 py-2 rounded-tr-lg">Actions</th>
               </tr>
@@ -224,7 +240,7 @@ const DataPasien = () => {
             <tbody className="bg-lightgray">
               {patients.length === 0 ? (
                 <tr>
-                  <td colSpan="5" className="text-center py-4">No Data</td>
+                  <td colSpan="6" className="text-center py-4">No Data</td>
                 </tr>
               ) : (
                 patients.map((patient, index) => (
@@ -232,6 +248,7 @@ const DataPasien = () => {
                     <td className="border px-4 py-2">{patient.name}</td>
                     <td className="border px-4 py-2">{patient.gender}</td>
                     <td className="border px-4 py-2">{patient.birthdate}</td>
+                    <td className="border px-4 py-2">{patient.birthtime}</td>
                     <td className="border px-4 py-2">{patient.description}</td>
                     <td className="border py-2 flex justify-center items-center gap-5">
                       <button onClick={() => handleEdit(index)}>
@@ -290,14 +307,24 @@ const DataPasien = () => {
                 </select>
 
                 <label className="block mb-2">Tanggal Lahir</label>
-                <input
-                  type="date"
-                  className={`border p-2 mb-4 w-full ${newPatient.birthdate === "" ? "text-gray-500" : "text-black"}`}
-                  value={newPatient.birthdate}
-                  onChange={(e) =>
-                    setNewPatient({ ...newPatient, birthdate: e.target.value })
-                  }
-                />
+                <div className="flex mb-4">
+                  <input
+                    type="date"
+                    className={`border p-2 mr-2 w-1/2 ${newPatient.birthdate === "" ? "text-gray-500" : "text-black"}`}
+                    value={newPatient.birthdate}
+                    onChange={(e) =>
+                      setNewPatient({ ...newPatient, birthdate: e.target.value })
+                    }
+                  />
+                  <input
+                    type="time"
+                    className={`border p-2 w-1/2 ${newPatient.birthtime === "" ? "text-gray-500" : "text-black"}`}
+                    value={newPatient.birthtime}
+                    onChange={(e) =>
+                      setNewPatient({ ...newPatient, birthtime: e.target.value })
+                    }
+                  />
+                </div>
 
                 <label className="block mb-2">Keterangan</label>
                 <input
@@ -320,6 +347,7 @@ const DataPasien = () => {
                         name: "",
                         gender: "",
                         birthdate: "",
+                        birthtime: "",
                         description: "",
                       });
                     }}

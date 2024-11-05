@@ -62,32 +62,38 @@ export default function UserLogin() {
     handleLogin(userInfo);
   };
   return (
-    <div className="flex items-center justify-center min-h-screen bg-log-bg bg-cover bg-">
+    <div className="flex items-center justify-center min-h-screen bg-log-bg bg-cover">
       <Head>
-        <title>Rental Bahari | Login</title>
+        <title>BiliarD | Login</title>
       </Head>
 
-      <main className="flex items-center justify-center flex-1 text-center">
+      <main className="flex items-center justify-center flex-1 text-center py-10 md:py-0">
         <div className="flex flex-col md:flex-row bg-white rounded-2xl shadow-2xl w-11/12">
           {/* logo section */}
-          <div className="flex p-5 bg-darkgreen text-white rounded-tl-2xl rounded-tr-2xl md:rounded-bl-2xl md:rounded-tr-none flex-col items-center justify-center md:w-1/2">
+          <div className="hidden md:flex p-5 bg-darkgreen text-white rounded-tl-2xl rounded-tr-2xl md:rounded-bl-2xl md:rounded-tr-none flex-col items-center justify-center md:w-1/2">
             <img
               src="/assets/logo.png"
-              className="img-logo1 mb-2"
+              className="hidden md:block img-logo1 mb-2" 
               alt="Logo"
             />
             <div className="py-2">
-              <h2 className="text-3xl font-bold mb-5">BiliarD</h2>
+              <h2 className="text-3xl font-bold mb-2 lg:mb-6">BiliarD</h2>
             </div>
-            <p className="px-11 text-md leading-7 text-white">
-              BiliarD adalah platform inovatif yang dirancang untuk memantau dan mendeteksi kadar bilirubin secara non-invasif dengan kemampuan monitoring real-time.
+            <p className="px-1 md:px-3 lg:px-11 text-sm lg:text-base leading-6 md:leading-7 text-white">
+              BiliarD adalah platform inovatif untuk memantau dan mendeteksi kadar bilirubin secara non-invasif.
             </p>
           </div>
 
           {/* login */}
-          <div className="px-24 md:w-1/2">
+          <div className="px-14 lg:px-24 md:w-7/12 lg:w-1/2">
             <div className="py-2">
-              <h2 className="text-3xl text-purple font-bold mt-11 mb-3">Welcome back!</h2>
+            <h2 className="text-3xl text-black font-bold mt-11 mb-3 hidden md:block">
+                Welcome back!
+              </h2>
+              {/* Teks untuk layar kecil */}
+              <h2 className="text-2xl text-darkgreen font-bold mt-5 mb-3 block md:hidden">
+                Welcome back to BiliarD!
+              </h2>
             </div>
             <p className="text-gray-400 mb-10">login into your account</p>
 

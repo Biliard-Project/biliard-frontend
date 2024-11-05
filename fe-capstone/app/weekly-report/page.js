@@ -124,7 +124,7 @@ export default function WeeklyReport() {
       } else if (ageInHours > 72 && bilirubinLevel < 15) {
         return "Normal";
       } else {
-        return "High";
+        return "Melebihi batas normal";
       }
     };
   
@@ -278,7 +278,7 @@ export default function WeeklyReport() {
 
 
       {/* data & summary */}
-      <div className="flex flex-col lg:flex-row px-8 md:px-16 mt-6 mb-10 gap-5 md:gap-3.5">
+      <div className="flex flex-col lg:flex-row px-8 md:px-16 mt-6 mb-6 gap-5 md:gap-3.5">
         <DataCard 
           name={patientData.name} 
           birthDate={dayjs(patientData.birth_date).format("DD MMM YYYY")} 
