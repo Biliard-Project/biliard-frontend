@@ -51,7 +51,7 @@ export default function UserLogin() {
       console.log(data)
       console.log("Login successful");
       console.log(Cookies.get("session"))
-      Router.push('/')
+      Router.push('/home')
     } catch (error) {
       setErrorMessage(error.message);
     }
