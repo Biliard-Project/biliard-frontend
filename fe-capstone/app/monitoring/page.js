@@ -25,7 +25,7 @@ const StatusCard = ({ title, value, getStatus, additionalParams = {} }) => {
   // Determine text color based on status
   let colorClass = "text-darkgreen"; // Default color for "Normal"
   if (status !== "Normal") {
-    colorClass = "text-red-500"; // Red for any non-normal status
+    colorClass = "text-red"; // Red for any non-normal status
   }
 
   return (
@@ -106,6 +106,7 @@ export default function Monitoring() {
 
     const fetchPatientData = async () => {
       try {
+        console.log("Fetching patient data...");
         const response = await fetch(`https://biliard-backend.dundorma.dev/patients/${patientId}`, {
           method: 'GET',
           redirect: 'follow'
@@ -117,14 +118,25 @@ export default function Monitoring() {
 
         const data = await response.json();
         setPatientData(data);
+        console.log("Patient data fetched:", data);
       } catch (err) {
         console.error('Error fetching patient data:', err);
         setError('Failed to fetch patient data.');
       }
     };
 
+    fetchPatientData();
+  }, [patientId]);
+
+  // Fetch Records Data with Interval
+  useEffect(() => {
+    if (!patientId) return;
+
+    let isMounted = true; // To prevent state updates if component unmounts
+
     const fetchRecordsData = async () => {
       try {
+        console.log("Fetching records data...");
         const response = await fetch(`https://biliard-backend.dundorma.dev/records/patient/${patientId}`, {
           method: 'GET',
           redirect: 'follow'
@@ -135,17 +147,35 @@ export default function Monitoring() {
         }
 
         const data = await response.json();
-        setRecordsData(data);
+        if (isMounted) {
+          setRecordsData(data);
+          console.log("Records data fetched:", data);
+        }
       } catch (err) {
         console.error('Error fetching records data:', err);
-        setError('Failed to fetch records data.');
+        if (isMounted) {
+          setError('Failed to fetch records data.');
+        }
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
-    fetchPatientData();
+    // Initial fetch
     fetchRecordsData();
+
+    // Set up interval
+    const intervalId = setInterval(() => {
+      fetchRecordsData();
+    }, 3000);
+
+    // Cleanup on unmount
+    return () => {
+      isMounted = false;
+      clearInterval(intervalId);
+    };
   }, [patientId]);
 
   // Change data records format for Recharts
