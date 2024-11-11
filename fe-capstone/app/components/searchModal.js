@@ -117,7 +117,7 @@ const SearchModal = ({ isOpen, onClose, redirectToPage }) => {
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             placeholder="Search patient"
-            className="mt-4 p-2 border w-full rounded-xl focus:outline-none"
+            className="mt-4 p-2 border w-full rounded-xl focus:outline-none text-black"
           />
 
           {/* Display filtered patients or no data message */}
@@ -131,7 +131,7 @@ const SearchModal = ({ isOpen, onClose, redirectToPage }) => {
                 {filteredPatients.map((patient) => (
                   <li
                     key={patient.id} 
-                    className="py-3 border-b cursor-pointer hover:bg-gray-200"
+                    className="py-3 border-b cursor-pointer hover:bg-gray-200 text-black"
                     onClick={() => handlePatientClick(patient)} // Handle click event
                   >
                     {patient.name}

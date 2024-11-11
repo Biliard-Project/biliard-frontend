@@ -22,6 +22,7 @@ module.exports = {
       },
       backgroundPosition: {
         'left-bottom': 'left bottom',
+        'left-top': 'left top',
       },
       backgroundSizePosition: {
         '75-left-bottom': '75% left bottom',

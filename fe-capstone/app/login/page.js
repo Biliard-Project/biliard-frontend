@@ -105,7 +105,7 @@ export default function UserLogin() {
             >
               <div className="flex flex-col gap-8">
                 <div className="flex flex-col gap-2">
-                  <label className="font-semibold text-left">Email</label>
+                  <label className="font-semibold text-left text-black">Email</label>
                   <div>
                     <input
                       type="email"
@@ -113,14 +113,14 @@ export default function UserLogin() {
                       value={email}
                       name="email"
                       label="Email"
-                      className="border-2 border-main-black/20 focus:border-dark-green-1 focus:outline-none rounded-2xl px-6 py-3 w-full bg-gray-100"
+                      className="border-2 border-main-black/20 focus:border-dark-green-1 focus:outline-none rounded-2xl px-6 py-3 w-full bg-gray-100 text-black"
                       placeholder="Enter email"
                       required
                     />
                   </div>
                 </div>
                 <div className="flex flex-col gap-2">
-                  <label className="font-semibold text-left">Password</label>
+                  <label className="font-semibold text-left text-black">Password</label>
                   <div className="relative">
                     <input
                       onChange={handleChange}
@@ -129,10 +129,10 @@ export default function UserLogin() {
                       label="Password"
                       type={isPasswordHidden ? "password" : "show"}
                       placeholder="Enter password"
-                      className="border-2 border-main-black/20 focus:border-dark-green-1 focus:outline-none rounded-2xl px-6 py-3 w-full bg-gray-100"
+                      className="border-2 border-main-black/20 focus:border-dark-green-1 focus:outline-none rounded-2xl px-6 py-3 w-full bg-gray-100 text-black"
                       required
                     />
-                    <div className="inset-y-0 pr-5 absolute right-0 flex items-center">
+                    <div className="inset-y-0 pr-5 absolute right-0 flex items-center text-black">
                       {isPasswordHidden ? (
                         <FiEyeOff
                           size={20}
@@ -157,7 +157,7 @@ export default function UserLogin() {
                   Login
                 </button>
               </div>
-              <div className="flex items-center justify-center text-xs mb-16 mt-3">
+              <div className="flex items-center justify-center text-xs mb-16 mt-3 text-black">
                 <span>Don&apos;t have an account?&nbsp;</span>
                 <Link href="/register" className="underline">
                   Sign up
