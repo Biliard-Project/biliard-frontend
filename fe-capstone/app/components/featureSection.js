@@ -11,10 +11,10 @@ export default function FeatureSection({ number, title, description }) {
             </div>
             <div className="col-span-5">
                 <div className="flex flex-col gap-2 md:gap-4 lg:gap-6">
-                    <h2 className="text-xl md:text-3xl text-darkgreen font-bold">
+                    <h2 className="text-xl md:text-2xl lg:text-3xl text-darkgreen font-bold">
                         {title}
                     </h2>
-                    <p className="text-xl md:text-xl leading-loose md:leading-relaxed text-justify">
+                    <p className="text-xl md:text-lg lg:text-xl leading-loose md:leading-relaxed text-justify">
                         {description}
                     </p>
                 </div>

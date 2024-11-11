@@ -20,6 +20,7 @@ const SearchModal = ({ isOpen, onClose, redirectToPage }) => {
   // ];
 
   useEffect(() => {
+    
     const fetchPatients = async () => {
       setLoading(true);
       setError(null);
@@ -40,9 +41,18 @@ const SearchModal = ({ isOpen, onClose, redirectToPage }) => {
         setLoading(false);
       }
     };
-
+  
+    // Fetch data pertama kali saat modal dibuka
     fetchPatients();
-  }, []);
+  
+    // Set interval untuk fetch data setiap 3 detik
+    // const intervalId = setInterval(() => {
+    //   fetchPatients();
+    // }, 3000);
+  
+    // // Cleanup interval saat modal ditutup atau komponen di-unmount
+    // return () => clearInterval(intervalId);
+  }, []);  
 
 
   useEffect(() => {
@@ -63,8 +73,28 @@ const SearchModal = ({ isOpen, onClose, redirectToPage }) => {
       setFilteredPatients(filtered);
     }
   }, [inputValue, patients]);
+
+  const handlePatientScan = async (patientId) => {
+    try {
+      const response = await fetch(`https://biliard-backend.dundorma.dev/patient_scan/${patientId}`, {
+        method: 'POST',
+        redirect: 'follow'
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.text();
+      console.log("Patient set to scan:", result);
+    } catch (error) {
+      console.error("Error setting patient to scan:", error);
+    }
+  };
+
   
-  const handlePatientClick = (patient) => {
+  const handlePatientClick = async (patient) => {
+    await handlePatientScan(patient.id);
     // Redirect to the appropriate page with patient info
     if (redirectToPage === "monitoring") {
       router.push(`/monitoring?patient=${patient.id}`);

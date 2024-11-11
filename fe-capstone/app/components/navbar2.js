@@ -43,7 +43,7 @@ export default function Navbar2() {
               alt="Sidebar Icon"
             />
             <div className="text-white font-semibold text-2xl">
-              <a href="/" className="flex items-center">BiliarD</a>
+              <a href="/home" className="flex items-center">BiliarD</a>
             </div>
           </div>
 
