@@ -12,6 +12,7 @@
   --lightgray: #F9FAFB;
   --red: #964141;
   --yellow: #F8F5F0;
+  --black: #000000;
 }
 
 @media (prefers-color-scheme: dark) {
