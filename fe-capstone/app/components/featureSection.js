@@ -14,7 +14,7 @@ export default function FeatureSection({ number, title, description }) {
                     <h2 className="text-xl md:text-2xl lg:text-3xl text-darkgreen font-bold">
                         {title}
                     </h2>
-                    <p className="text-xl md:text-lg lg:text-xl leading-loose md:leading-relaxed text-justify">
+                    <p className="text-xl md:text-lg lg:text-xl leading-loose md:leading-relaxed text-justify text-black">
                         {description}
                     </p>
                 </div>

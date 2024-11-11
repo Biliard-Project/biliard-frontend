@@ -26,7 +26,7 @@ export default function landingPage() {
             </div>
           </div>
           <div className="hidden lg:block">
-            <img src="/assets/foot.png" className="img-foot mr-20"/>
+            <img src="/assets/foot.png" className="img-foot"/>
           </div>
         </div>
         <div className="flex w-full px-8 md:px-16 py-10 md:mb-10 lg:mb-14 lg:mt-10 text-darkgreen text-2xl md:text-4xl font-bold">
@@ -35,15 +35,15 @@ export default function landingPage() {
         <div className="flex flex-col md:flex-row gap-5 mb-20 lg:mb-32 px-6 md:px-0">
           <div className="flex flex-row md:flex-col justify-center items-center font-semibold w-11/12 md:w-5/12 gap-4 md:gap-6">
             <img src="/assets/lp1.png" className="img-lp"/>
-            <p className="text-sm md:text-lg lg:text-xl text-left md:text-center w-10/12">Memungkinkan deteksi kadar bilirubin secara non invasif</p>
+            <p className="text-sm md:text-lg lg:text-xl text-left md:text-center w-10/12 text-black">Memungkinkan deteksi kadar bilirubin secara non invasif</p>
           </div>
           <div className="flex flex-row md:flex-col justify-center items-center font-semibold w-11/12 md:w-5/12 gap-4 md:gap-6">
             <img src="/assets/lp2.png" className="img-lp"/>
-            <p className="text-sm md:text-lg lg:text-xl text-left md:text-center w-10/12">Menyediakan grafik statistik hasil tes setiap minggunya</p>
+            <p className="text-sm md:text-lg lg:text-xl text-left md:text-center w-10/12 text-black">Menyediakan grafik statistik hasil tes setiap minggunya</p>
           </div>
           <div className="flex flex-row md:flex-col items-center justify-center font-semibold w-11/12 md:w-5/12 gap-4 md:gap-6">
             <img src="/assets/lp3.png" className="img-lp"/>
-            <p className="text-sm md:text-lg lg:text-xl text-left md:text-center w-10/12">Menyediakan data riwayat hasil pengecekan pasien</p>
+            <p className="text-sm md:text-lg lg:text-xl text-left md:text-center w-10/12 text-black">Menyediakan data riwayat hasil pengecekan pasien</p>
           </div>
         </div>
         <div className="flex items-center justify-center bg-darkgreen w-full py-10 lg:py-14 text-5xl font-bold text-white">
