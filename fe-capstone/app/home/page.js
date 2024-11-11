@@ -47,9 +47,9 @@ export default function Home() {
         <div className="bg-lightgreen rounded-3xl shadow-xl">
           <div className="flex justify-between">
             <div className="flex flex-col px-7 py-7 md:px-10 lg:py-8 lg:px-14 tracking-wider">
-              <p className="mb-1.5 text-md md:text-xl">Welcome back,</p>
-              <p className="font-bold text-2xl md:text-3xl mb-4">Aditya Pramudya!</p>
-              <p className="text-md md:text-xl">Monitor selalu kadar bilirubin harian pasien!</p>
+              <p className="mb-1.5 text-md md:text-xl text-black">Welcome back,</p>
+              <p className="font-bold text-2xl md:text-3xl mb-4 text-black">Aditya Pramudya!</p>
+              <p className="text-md md:text-xl text-black">Monitor selalu kadar bilirubin harian pasien!</p>
               <button 
                 className="button bg-darkgreen w-44 md:w-52 rounded-3xl font-semibold text-lg md:text-xl p-2.5 mt-8 text-white cursor-pointer hover:shadow-lg hover:shadow-gray-400 hover:scale-100"
                 onClick={() => openModal("monitoring")} 
