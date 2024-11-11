@@ -71,11 +71,11 @@ export default function Home() {
         </div>
 
         {/* Feature button */}
-        <div className="flex flex-col mb-20 justify-center gap-10 lg:flex-row">
+        <div className="flex flex-col mb-20 justify-between gap-16 lg:flex-row">
           <a
             href="#"
             onClick={() => openModal("monitoring")}
-            className="flex justify-center items-center gap-6 bg-lightyellow rounded-2xl shadow-lg py-6 px-10 hover:shadow-2xl transition-shadow duration-300"
+            className="flex justify-center items-center gap-6 bg-lightyellow rounded-2xl shadow-lg py-6 w-full hover:shadow-2xl transition-shadow duration-300"
           >
             <div>
               <img src="/assets/stat.png" className="stat" />
@@ -85,7 +85,7 @@ export default function Home() {
           <a
             href="#"
             onClick={() => openModal("weekly-report")}
-            className="flex justify-center items-center gap-6 bg-lightyellow rounded-2xl shadow-lg py-6 px-10 hover:shadow-2xl transition-shadow duration-300"
+            className="flex justify-center items-center gap-6 bg-lightyellow rounded-2xl shadow-lg py-6 px-3 w-full hover:shadow-2xl transition-shadow duration-300"
           >
             <div>
               <img src="/assets/report.png" className="stat" />
@@ -94,7 +94,7 @@ export default function Home() {
           </a>
           <a
             href="/data-pasien"
-            className="flex justify-center items-center gap-6 bg-lightyellow rounded-2xl shadow-lg py-6 px-10 hover:shadow-2xl transition-shadow duration-300"
+            className="flex justify-center items-center gap-6 bg-lightyellow rounded-2xl shadow-lg py-6 w-full hover:shadow-2xl transition-shadow duration-300"
           >
             <div>
               <img src="/assets/db.png" className="stat" />

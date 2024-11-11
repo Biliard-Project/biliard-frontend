@@ -82,8 +82,8 @@ const PatientDataCard = ({ name, birthDate }) => {
   return (
     <div className="bg-lightgreen p-4 rounded-xl shadow-md w-full">
       <h3 className="text-lg font-bold text-darkgreen mb-2">Data Pasien</h3>
-      <p className="md:text-sm lg:text-lg mb-1"><span>Nama Lengkap:</span> {name}</p>
-      <p className="md:text-sm lg:text-lg mb-1"><span>Tanggal Lahir:</span> {birthDate}</p>
+      <p className="md:text-sm lg:text-lg mb-1 text-black"><span>Nama Lengkap:</span> {name}</p>
+      <p className="md:text-sm lg:text-lg mb-1 text-black"><span>Tanggal Lahir:</span> {birthDate}</p>
     </div>
   );
 };
