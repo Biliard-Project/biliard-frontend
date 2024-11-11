@@ -228,7 +228,7 @@ const DataPasien = () => {
         <div className="w-full overflow-x-auto lg:w-10/12 md:overflow-hidden rounded-lg">
           <table className="table-auto w-full">
             <thead className="bg-lightyellow">
-              <tr>
+              <tr className="text-black">
                 <th className="border px-4 py-2 rounded-tl-lg">Nama</th>
                 <th className="border px-4 py-2">Jenis Kelamin</th>
                 <th className="border px-4 py-2">Tanggal Lahir</th>
@@ -237,7 +237,7 @@ const DataPasien = () => {
                 <th className="border px-4 py-2 rounded-tr-lg">Actions</th>
               </tr>
             </thead>
-            <tbody className="bg-lightgray">
+            <tbody className="bg-lightgray text-black">
               {patients.length === 0 ? (
                 <tr>
                   <td colSpan="6" className="text-center py-4">No Data</td>
@@ -279,21 +279,21 @@ const DataPasien = () => {
           <div className="fixed z-10 inset-0 bg-white bg-opacity-50 overflow-y-auto">
             <div className="flex items-center justify-center min-h-screen">
               <div className="bg-white px-8 md:px-16 py-8 border border-gray-400 rounded-xl shadow-lg w-11/12 md:w-9/12 lg:w-1/2">
-                <h2 className="text-lg font-bold mb-4">
+                <h2 className="text-lg font-bold mb-4 text-black">
                   {isEditing ? "Edit Patient" : "Add New Patient"}
                 </h2>
-                <label className="block mb-2">Nama</label>
+                <label className="block mb-2 text-black">Nama</label>
                 <input
                   type="text"
                   placeholder="Nama"
-                  className="border p-2 mb-4 w-full"
+                  className="border p-2 mb-4 w-full text-black"
                   value={newPatient.name}
                   onChange={(e) =>
                     setNewPatient({ ...newPatient, name: e.target.value })
                   }
                 />
 
-                <label className="block mb-2">Jenis Kelamin</label>
+                <label className="block mb-2 text-black">Jenis Kelamin</label>
                 <select
                   className={`border p-2 mb-4 w-full ${newPatient.gender === "" ? "text-gray-500" : "text-black"}`}
                   value={newPatient.gender}
@@ -306,7 +306,7 @@ const DataPasien = () => {
                   <option value="Perempuan">Perempuan</option>
                 </select>
 
-                <label className="block mb-2">Tanggal Lahir</label>
+                <label className="block mb-2 text-black">Tanggal Lahir</label>
                 <div className="flex mb-4">
                   <input
                     type="date"
@@ -326,11 +326,11 @@ const DataPasien = () => {
                   />
                 </div>
 
-                <label className="block mb-2">Keterangan</label>
+                <label className="block mb-2 text-black">Keterangan</label>
                 <input
                   type="text"
                   placeholder="Keterangan"
-                  className="border p-2 mb-4 w-full"
+                  className="border p-2 mb-4 w-full text-black"
                   value={newPatient.description}
                   onChange={(e) =>
                     setNewPatient({ ...newPatient, description: e.target.value })

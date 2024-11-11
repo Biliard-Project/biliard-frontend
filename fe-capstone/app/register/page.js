@@ -86,8 +86,8 @@ export default function UserRegister() {
           <div className="py-reg">
             <h2 className="text-2xl md:text-3xl font-bold text-darkgreen md:text-black mt-8 mb-4">Welcome to BiliarD!</h2>
             <div className="hidden text-neutral-800 text-xs mb-8 lg:block">
-              <p className="">Create an account to get started with Biliard.</p>
-              <p>Stay healthy, Stay sane!</p>
+              <p className="text-black">Create an account to get started with Biliard.</p>
+              <p className="text-black">Stay healthy, Stay sane!</p>
             </div>
             <div className="text-neutral-800 px-10 text-xs mb-8 lg:hidden">
               BiliarD, platform inovatif deteksi kadar bilirubin secara non-invasif!
@@ -99,54 +99,54 @@ export default function UserRegister() {
           <form onSubmit={handleSubmit} className="flex flex-col px-12 md:px-28 lg:px-36 xl:px-44">
             <div className="flex flex-col gap-2 md:gap-5">
               <div className="flex flex-col gap-1">
-                <label className="font-medium text-sm md:text-base text-left">Name</label>
+                <label className="font-medium text-sm md:text-base text-left text-black">Name</label>
                 <div>
                   <input
                     type="name"
                     onChange={handleChange}
                     value={name}
                     name="name"
-                    className="border-2 border-main-black/20 focus:border-dark-green-1 focus:outline-none rounded-2xl px-6 py-2 w-full bg-gray-100"
+                    className="border-2 text-black border-main-black/20 focus:border-dark-green-1 focus:outline-none rounded-2xl px-6 py-2 w-full bg-gray-100"
                     placeholder="Enter name"
                     required
                   />
                 </div>
               </div>
               <div className="flex flex-col gap-2">
-                <label className="font-medium text-sm md:text-base text-left">Email</label>
+                <label className="font-medium text-sm md:text-base text-left text-black">Email</label>
                 <div className="relative">
                   <input
                     onChange={handleChange}
                     value={email}
                     name="email"
                     placeholder="Enter email"
-                    className="border-2 border-main-black/20 focus:border-dark-green-1 focus:outline-none rounded-2xl px-6 py-2 w-full bg-gray-100"
+                    className="border-2 text-black border-main-black/20 focus:border-dark-green-1 focus:outline-none rounded-2xl px-6 py-2 w-full bg-gray-100"
                     required
                   />
                 </div>
               </div>
               <div className="flex flex-col gap-2">
-                <label className="font-medium text-sm md:text-base text-left">Password</label>
+                <label className="font-medium text-sm md:text-base text-left text-black">Password</label>
                 <div className="relative">
                   <input
                     onChange={handleChange}
                     value={password}
                     name="password"
                     placeholder="Enter password"
-                    className="border-2 border-main-black/20 focus:border-dark-green-1 focus:outline-none rounded-2xl px-6 py-2 w-full bg-gray-100"
+                    className="border-2 text-black border-main-black/20 focus:border-dark-green-1 focus:outline-none rounded-2xl px-6 py-2 w-full bg-gray-100"
                     required
                   />
                 </div>
               </div>
               <div className="flex flex-col gap-3">
-                <label className="font-medium text-sm md:text-base text-left">Confirm Password</label>
+                <label className="font-medium text-sm md:text-base text-left text-black">Confirm Password</label>
                 <div className="relative">
                   <input
                     onChange={handleChange}
                     value={confirmPassword}
                     name="confirmPassword"
                     placeholder="Confirm password"
-                    className="border-2 border-main-black/20 focus:border-dark-green-1 focus:outline-none rounded-2xl px-6 py-2 w-full bg-gray-100"
+                    className="border-2 text-black border-main-black/20 focus:border-dark-green-1 focus:outline-none rounded-2xl px-6 py-2 w-full bg-gray-100"
                     required
                   />
                 </div>
@@ -158,7 +158,7 @@ export default function UserRegister() {
                 Sign Up
               </button>
             </div>
-            <div className="flex items-center justify-center text-xs mb-4">
+            <div className="flex items-center text-black justify-center text-xs mb-4">
               <span>Already have an account?&nbsp;</span>
               <Link href="/login" className="underline">
                 Sign in
