@@ -24,7 +24,7 @@ export default function Sidebar({ isOpen, onClose }) {
 
       {/* Sidebar */}
       <div
-        className={`fixed top-0 left-0 h-full w-64 sm:w-72 bg-darkgreen text-white z-50 transform ${
+        className={`fixed top-0 left-0 h-full w-64 sm:w-72 lg:w-80 bg-darkgreen text-white z-50 transform ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         } transition-transform duration-300 ease-in-out`}
       >
@@ -41,14 +41,14 @@ export default function Sidebar({ isOpen, onClose }) {
 
           {/* feature sidebar */}
           <div className="py-6 px-8">
-            <ul className="text-lg ">
-              <li className="mb-7">
+            <ul className="text-lg lg:text-2xl gap-8 lg:gap-10 flex flex-col">
+              <li>
                 <Link href="/" className="flex items-center">
                   <img src="/assets/home.png" className="inline-block mr-5" />
                   Home
                 </Link>
               </li>
-              <li className="mb-7">
+              <li>
                 <a
                   onClick={() => openModal("monitoring")} // Open modal for monitoring
                   className="flex items-center cursor-pointer"
@@ -67,7 +67,7 @@ export default function Sidebar({ isOpen, onClose }) {
                   Monitoring
                 </Link> */}
               </li>
-              <li className="mb-7">
+              <li>
                 <a
                   onClick={() => openModal("weekly-report")} // Open modal for weekly report
                   className="flex items-center cursor-pointer"

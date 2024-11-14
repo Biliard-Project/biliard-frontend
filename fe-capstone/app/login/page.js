@@ -79,7 +79,7 @@ export default function UserLogin() {
             <div className="py-2">
               <h2 className="text-3xl font-bold mb-2 lg:mb-6">BiliarD</h2>
             </div>
-            <p className="px-1 md:px-3 lg:px-11 text-sm lg:text-base leading-6 md:leading-7 text-white">
+            <p className="px-1 md:px-3 lg:px-11 text-sm md:text-base lg:text-xl leading-loose md:leading-7 text-white">
               BiliarD adalah platform inovatif untuk memantau dan mendeteksi kadar bilirubin secara non-invasif.
             </p>
           </div>
@@ -95,7 +95,7 @@ export default function UserLogin() {
                 Welcome back to BiliarD!
               </h2>
             </div>
-            <p className="text-gray-400 mb-10">login into your account</p>
+            <p className="text-gray-400 mb-10 text-base lg:text-lg">login into your account</p>
 
             {errorMessage && <p className="text-red-500">{errorMessage}</p>}
 
@@ -104,8 +104,8 @@ export default function UserLogin() {
               className="flex flex-col lg:px-5 xl:px-16"
             >
               <div className="flex flex-col gap-8">
-                <div className="flex flex-col gap-2">
-                  <label className="font-semibold text-left text-black">Email</label>
+                <div className="flex flex-col gap-2 lg:gap-3">
+                  <label className="font-semibold text-sm md:text-base lg:text-lg text-left text-black">Email</label>
                   <div>
                     <input
                       type="email"
@@ -113,14 +113,14 @@ export default function UserLogin() {
                       value={email}
                       name="email"
                       label="Email"
-                      className="border-2 border-main-black/20 focus:border-dark-green-1 focus:outline-none rounded-2xl px-6 py-3 w-full bg-gray-100 text-black"
+                      className="border-2 text-base lg:text-lg border-main-black/20 focus:border-dark-green-1 focus:outline-none rounded-2xl px-6 py-3 w-full bg-gray-100 text-black"
                       placeholder="Enter email"
                       required
                     />
                   </div>
                 </div>
                 <div className="flex flex-col gap-2">
-                  <label className="font-semibold text-left text-black">Password</label>
+                  <label className="font-semibold text-sm md:text-base lg:text-lg text-left text-black">Password</label>
                   <div className="relative">
                     <input
                       onChange={handleChange}
@@ -129,7 +129,7 @@ export default function UserLogin() {
                       label="Password"
                       type={isPasswordHidden ? "password" : "show"}
                       placeholder="Enter password"
-                      className="border-2 border-main-black/20 focus:border-dark-green-1 focus:outline-none rounded-2xl px-6 py-3 w-full bg-gray-100 text-black"
+                      className="border-2 text-base lg:text-lg border-main-black/20 focus:border-dark-green-1 focus:outline-none rounded-2xl px-6 py-3 w-full bg-gray-100 text-black"
                       required
                     />
                     <div className="inset-y-0 pr-5 absolute right-0 flex items-center text-black">
@@ -152,12 +152,12 @@ export default function UserLogin() {
               <div className="mb-6">
                 <button
                   type="submit"
-                  className="bg-darkgreen w-1/2 py-2 rounded-3xl text-white font-semibold mt-12"
+                  className="bg-darkgreen w-1/2 lg:w-40 py-2 rounded-3xl text-white text-lg lg:text-xl font-semibold mt-12"
                 >
                   Login
                 </button>
               </div>
-              <div className="flex items-center justify-center text-xs mb-16 mt-3 text-black">
+              <div className="flex items-center justify-center text-xs lg:text-lg mb-16 mt-3 text-black">
                 <span>Don&apos;t have an account?&nbsp;</span>
                 <Link href="/register" className="underline">
                   Sign up

@@ -12,7 +12,12 @@ module.exports = {
         // "gradient-conic":
         //   "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
         'reg-bg': 'url(/assets/reg4.png)',
-        'log-bg': 'url(/assets/log.png)'
+        'log-bg': 'url(/assets/log.png)',
+      },
+      spacing: {
+        '30': '120px',
+        '50': '200px',
+        '70': '270px',
       },
       backgroundSize: {
         '50%': '50%',

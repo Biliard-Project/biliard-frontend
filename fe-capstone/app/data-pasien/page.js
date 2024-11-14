@@ -219,25 +219,25 @@ const DataPasien = () => {
   return (
     <main className="flex min-h-screen flex-col bg-white items-center">
       <Navbar2></Navbar2>
-      <div className="flex w-full px-6 md:px-8 lg:px-16 mt-6 items-start justify-start">
-        <div className="text-darkgreen text-xl md:text-2xl font-bold">Data Pasien</div>
+      <div className="flex w-full px-6 md:px-8 lg:px-16 mt-6 lg:mt-8 mb-1 lg:mb-3 items-start justify-start">
+        <div className="text-darkgreen text-xl md:text-2xl lg:text-3xl font-bold">Data Pasien</div>
       </div>
       <div className="line"></div>
 
       <div className="flex flex-col items-center container mt-3 md:mt-8 mx-auto p-5 lg:p-4">
-        <div className="w-full overflow-x-auto lg:w-10/12 md:overflow-hidden rounded-lg">
-          <table className="table-auto w-full">
+        <div className="w-full overflow-x-auto lg:w-12/12 md:overflow-hidden rounded-lg">
+          <table className="table-auto w-full text-sm md:text-base lg:text-xl">
             <thead className="bg-lightyellow">
               <tr className="text-black">
-                <th className="border px-4 py-2 rounded-tl-lg">Nama</th>
-                <th className="border px-4 py-2">Jenis Kelamin</th>
-                <th className="border px-4 py-2">Tanggal Lahir</th>
-                <th className="border px-4 py-2">Waktu Lahir</th>
-                <th className="border px-4 py-2">Keterangan</th>
-                <th className="border px-4 py-2 rounded-tr-lg">Actions</th>
+                <th className="border px-4 py-2 md:px-4 md:py-2 rounded-tl-lg">Nama</th>
+                <th className="border px-4 py-2 md:px-4 md:py-2 ">Jenis Kelamin</th>
+                <th className="border px-4 py-2 md:px-4 md:py-2 ">Tanggal Lahir</th>
+                <th className="border px-4 py-2 md:px-4 md:py-2 ">Waktu Lahir</th>
+                <th className="border px-4 py-2 md:px-4 md:py-2 ">Keterangan</th>
+                <th className="border px-4 py-2 md:px-4 md:py-2 rounded-tr-lg">Actions</th>
               </tr>
             </thead>
-            <tbody className="bg-lightgray text-black">
+            <tbody className="bg-lightgray text-black text-base lg:text-xl">
               {patients.length === 0 ? (
                 <tr>
                   <td colSpan="6" className="text-center py-4">No Data</td>
@@ -245,21 +245,27 @@ const DataPasien = () => {
               ) : (
                 patients.map((patient, index) => (
                   <tr key={index}>
-                    <td className="border px-4 py-2">{patient.name}</td>
-                    <td className="border px-4 py-2">{patient.gender}</td>
-                    <td className="border px-4 py-2">{patient.birthdate}</td>
-                    <td className="border px-4 py-2">{patient.birthtime}</td>
-                    <td className="border px-4 py-2">{patient.description}</td>
-                    <td className="border py-2 flex justify-center items-center gap-5">
-                      <button onClick={() => handleEdit(index)}>
-                        <img src="/assets/edit.png" alt="Edit" className="h-6 w-6" />
-                      </button>
-                      <button onClick={() => confirmDelete(index)}>
-                        <img src="/assets/delete.png" alt="Delete" className="h-7 w-7" />
-                      </button>
-                      <button onClick={() => handleDownloadPdf(patient.id)}>
-                        <img src="/assets/download3.png" alt="Download" className="h-7 w-7" />
-                      </button>
+                    <td className="border px-4 py-2 md:px-4 md:py-2 lg:py-3">{patient.name}</td>
+                    <td className="border px-4 py-2 md:px-4 md:py-2 lg:py-3">{patient.gender}</td>
+                    <td className="border px-4 py-2 md:px-4 md:py-2 lg:py-3">{patient.birthdate}</td>
+                    <td className="border px-4 py-2 md:px-4 md:py-2 lg:py-3">{patient.birthtime}</td>
+                    <td className="border px-4 py-2 md:px-4 md:py-2 lg:py-3">
+                      <div className="truncate max-w-xs" title={patient.description}>
+                        {patient.description}
+                      </div>
+                    </td>
+                    <td className="border px-4 py-2 md:px-4 md:py-2 text-center align-middle">
+                      <div className="flex justify-center items-center gap-3 md:gap-5">
+                        <button onClick={() => handleEdit(index)} className="h-5 w-5 md:h-6 md:w-6">
+                          <img src="/assets/edit.png" alt="Edit" />
+                        </button>
+                        <button onClick={() => confirmDelete(index)} className="h-5 w-5 md:h-6 md:w-6">
+                          <img src="/assets/delete.png" alt="Delete" />
+                        </button>
+                        <button onClick={() => handleDownloadPdf(patient.id)} className="h-5 w-5 md:h-7 md:w-7">
+                          <img src="/assets/download3.png" alt="Download" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -269,7 +275,7 @@ const DataPasien = () => {
         </div>
 
         <button
-          className="mt-7 md:mx-6 lg:mx-36 px-5 py-2 bg-darkgreen text-white font-semibold rounded-xl self-start"
+          className="mt-7 text-xl md:mx-6 lg:mx-12 px-5 py-2 bg-darkgreen text-white font-semibold rounded-xl self-start"
           onClick={() => setShowModal(true)}
         >
           Add new data
