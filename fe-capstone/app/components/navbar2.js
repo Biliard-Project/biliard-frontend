@@ -33,7 +33,7 @@ export default function Navbar2() {
   return (
     <>
       {/* Navbar */}
-      <div className="bg-darkgreen w-full px-6 py-2 flex items-center fixed top-0 left-0 z-50">
+      <div className="bg-darkgreen w-full px-6 py-3 flex items-center fixed top-0 left-0 z-50">
         <div className="flex w-full justify-between items-center">
           <div className="flex items-center gap-4">
             <img
@@ -42,7 +42,7 @@ export default function Navbar2() {
               onClick={toggleSidebar}
               alt="Sidebar Icon"
             />
-            <div className="text-white font-semibold text-2xl">
+            <div className="text-white font-semibold text-3xl">
               <a href="/home" className="flex items-center">BiliarD</a>
             </div>
           </div>

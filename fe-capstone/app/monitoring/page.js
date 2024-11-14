@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useSearchParams } from "next/navigation"; 
 import Navbar2 from "../components/navbar2";
 import { Tooltip as ReactTooltip } from 'react-tooltip';
@@ -30,9 +30,9 @@ const StatusCard = ({ title, value, getStatus, additionalParams = {} }) => {
 
   return (
     <div className="bg-lightgreen p-4 rounded-xl shadow-md w-full text-center">
-      <h3 className="text-lg font-bold text-darkgreen mb-2 md:mb-4 lg:mb-2">{title}</h3>
+      <h3 className="text-2xl font-bold text-darkgreen mb-2 md:mb-4 lg:mb-3 mt-0 lg:mt-2">{title}</h3>
       <div
-        className={`text-4xl lg:text-5xl font-bold ${colorClass}`}
+        className={`text-4xl lg:text-6xl py-4 font-bold ${colorClass}`}
         data-tooltip-content={status !== '' ? status : ''}
         data-tooltip-id={`${title}Tooltip`}
       >
@@ -47,6 +47,8 @@ const StatusCard = ({ title, value, getStatus, additionalParams = {} }) => {
 
 // Status Functions
 const getBilirubinStatus = (bilirubinLevel, { ageInHours }) => {
+  if (ageInHours === null) return "Data tidak valid";
+
   if (ageInHours <= 24 && bilirubinLevel < 5) {
     return "Normal";
   } else if (ageInHours > 24 && ageInHours <= 48 && bilirubinLevel < 10) {
@@ -80,10 +82,10 @@ const getOxygenSaturationStatus = (oxygenSaturation) => {
 
 const PatientDataCard = ({ name, birthDate }) => {
   return (
-    <div className="bg-lightgreen p-4 rounded-xl shadow-md w-full">
-      <h3 className="text-lg font-bold text-darkgreen mb-2">Data Pasien</h3>
-      <p className="md:text-sm lg:text-lg mb-1 text-black"><span>Nama Lengkap:</span> {name}</p>
-      <p className="md:text-sm lg:text-lg mb-1 text-black"><span>Tanggal Lahir:</span> {birthDate}</p>
+    <div className="bg-lightgreen p-7 rounded-xl shadow-md w-full">
+      <h3 className="text-lg lg:text-3xl font-bold text-darkgreen mb-2 lg:mb-3">Data Pasien</h3>
+      <p className="md:text-sm lg:text-xl mb-1 lg:mb-3 text-black"><span>Nama Lengkap:</span> {name}</p>
+      <p className="md:text-sm lg:text-xl mb-1 lg:mb-3 text-black"><span>Tanggal Lahir:</span> {birthDate}</p>
     </div>
   );
 };
@@ -97,6 +99,7 @@ export default function Monitoring() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Fetch patient data
   useEffect(() => {
     if (!patientId) {
       setError("No patient selected.");
@@ -182,7 +185,16 @@ export default function Monitoring() {
   const formatRecordsData = (data) => {
     if (!Array.isArray(data) || data.length === 0) return [];
 
-    return data.map(record => ({
+    // Sort data by test_date descending (terbaru ke terlama)
+    const sortedDataDesc = [...data].sort((a, b) => dayjs(b.test_date).diff(dayjs(a.test_date)));
+
+    // Ambil 10 data terbaru
+    const latest10DataDesc = sortedDataDesc.slice(0, 10);
+
+    // Sort kembali dalam urutan ascending (terlama ke terbaru) untuk grafik
+    const latest10DataAsc = latest10DataDesc.sort((a, b) => dayjs(a.test_date).diff(dayjs(b.test_date)));
+
+    return latest10DataAsc.map(record => ({
       timestamp: dayjs(record.test_date).format("DD MMM HH:mm"),
       bilirubin: record.bilirubin,
       heartRate: record.heart_rate,
@@ -190,7 +202,7 @@ export default function Monitoring() {
     }));
   };
 
-  const formattedRecordsData = formatRecordsData(recordsData);
+  const formattedRecordsData = useMemo(() => formatRecordsData(recordsData), [recordsData]);
 
   if (loading) {
     return (
@@ -239,12 +251,12 @@ export default function Monitoring() {
   return (
     <main className="flex min-h-screen flex-col bg-white items-center">
       <Navbar2 />
-      <div className="flex w-full px-8 md:px-16 mt-4 md:mt-6 items-start justify-start">
-        <div className="text-darkgreen text-xl md:text-2xl font-bold">Monitoring</div>
+      <div className="flex w-full px-8 md:px-16 mt-6 md:mt-8 items-start justify-start mb-1 md:mb-3">
+        <div className="text-darkgreen text-xl md:text-2xl lg:text-3xl font-bold">Monitoring</div>
       </div>
       <div className="line"></div>
 
-      <div className="flex w-full px-8 md:px-16 my-4 items-start justify-start text-gray-400">
+      <div className="flex w-full text-md md:text-xl px-8 md:px-16 my-4 items-start justify-start text-gray-400 mb-7">
         Tanggal Pengecekan: {latestRecordDate}
       </div>
 
@@ -303,7 +315,7 @@ export default function Monitoring() {
       </div>
 
       {/* Cards Section */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 px-10 md:px-16 my-6 w-full">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 px-10 md:px-16 py-6 w-full mt-7">
         {/* Data Pasien */}
         <PatientDataCard 
           name={patientData.name} 

@@ -44,7 +44,7 @@ export default function Home() {
       <Navbar2></Navbar2>
       <div className="flex flex-col gap-14 w-10/12 mx-14 my-12 lg:my-14 lg:mx-24 lg:w-9/12">
         {/* light green area */}
-        <div className="bg-lightgreen rounded-3xl shadow-xl">
+        <div className="bg-lightgreen rounded-3xl shadow-xl mt-1 lg:mt-6 mb-1 lg:mb-6">
           <div className="flex justify-between">
             <div className="flex flex-col px-7 py-7 md:px-10 lg:py-8 lg:px-14 tracking-wider">
               <p className="mb-1.5 text-md md:text-xl text-black">Welcome back,</p>
@@ -67,7 +67,7 @@ export default function Home() {
 
         {/* platform features */}
         <div className="w-full px-6 md:px-10">
-          <p className="text-darkgreen font-bold text-3xl">Platform Features</p>
+          <p className="text-darkgreen font-bold text-3xl lg:text-4xl">Platform Features</p>
         </div>
 
         {/* Feature button */}
@@ -75,31 +75,31 @@ export default function Home() {
           <a
             href="#"
             onClick={() => openModal("monitoring")}
-            className="flex justify-center items-center gap-6 bg-lightyellow rounded-2xl shadow-lg py-6 w-full hover:shadow-2xl transition-shadow duration-300"
+            className="flex justify-center items-center gap-6 bg-lightyellow rounded-2xl shadow-lg py-6 lg:py-8 w-full hover:shadow-2xl transition-shadow duration-300"
           >
             <div>
               <img src="/assets/stat.png" className="stat" />
             </div>
-            <div className="text-darkgreen text-3xl font-bold justify-start">Monitoring</div>
+            <div className="text-darkgreen text-3xl lg:text-4xl font-bold justify-start">Monitoring</div>
           </a>
           <a
             href="#"
             onClick={() => openModal("weekly-report")}
-            className="flex justify-center items-center gap-6 bg-lightyellow rounded-2xl shadow-lg py-6 px-3 w-full hover:shadow-2xl transition-shadow duration-300"
+            className="flex justify-center items-center gap-6 bg-lightyellow rounded-2xl shadow-lg py-6 lg:py-8 px-3 w-full hover:shadow-2xl transition-shadow duration-300"
           >
             <div>
               <img src="/assets/report.png" className="stat" />
             </div>
-            <div className="text-darkgreen text-3xl font-bold">Weekly Report</div>
+            <div className="text-darkgreen text-3xl lg:text-4xl font-bold">Weekly Report</div>
           </a>
           <a
             href="/data-pasien"
-            className="flex justify-center items-center gap-6 bg-lightyellow rounded-2xl shadow-lg py-6 w-full hover:shadow-2xl transition-shadow duration-300"
+            className="flex justify-center items-center gap-6 bg-lightyellow rounded-2xl shadow-lg py-6 lg:py-8 w-full hover:shadow-2xl transition-shadow duration-300"
           >
             <div>
               <img src="/assets/db.png" className="stat" />
             </div>
-            <div className="text-darkgreen text-3xl font-bold">Data Pasien</div>
+            <div className="text-darkgreen text-3xl lg:text-4xl font-bold">Data Pasien</div>
           </a>
         </div>
       </div>

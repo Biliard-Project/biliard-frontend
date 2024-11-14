@@ -3,7 +3,7 @@
 import Navbar2 from "../components/navbar2";
 import DataCard from "../components/dataCard";
 import SummaryCard from "../components/summaryCard";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import {
   LineChart,
@@ -28,94 +28,128 @@ export default function WeeklyReport() {
   const [error, setError] = useState(null);
   const [weeks, setWeeks] = useState([]);
   const [selectedWeek, setSelectedWeek] = useState(null);
+
+  const getBilirubinStatus = (bilirubinLevel, testDate) => {
+    if (!patientData) return "Data pasien tidak tersedia";
+
+    const ageInHours = dayjs(testDate).diff(dayjs(patientData.birth_date), 'hour');
+
+    if (ageInHours <= 24 && bilirubinLevel < 5) {
+      return "Normal";
+    } else if (ageInHours > 24 && ageInHours <= 48 && bilirubinLevel < 10) {
+      return "Normal";
+    } else if (ageInHours > 48 && ageInHours <= 72 && bilirubinLevel < 12) {
+      return "Normal";
+    } else if (ageInHours > 72 && bilirubinLevel < 15) {
+      return "Normal";
+    } else {
+      return "Melebihi batas normal";
+    }
+  };
+
+  // format records data
+  const formatRecordsData = (data) => {
+    return data.map(record => ({
+      timestamp: dayjs(record.test_date).format("DD MMM HH:mm"),
+      date: dayjs(record.test_date).format("DD MMM"),
+      bilirubin: record.bilirubin,
+      heartRate: record.heart_rate,
+      oxygenSaturation: record.oxygen,
+      bilirubinStatus: getBilirubinStatus(record.bilirubin, record.test_date)
+    }));
+  };
   
-    useEffect(() => {
-      if (!patientId) {
-        setError("No patient selected.");
-        setLoading(false);
-        return;
+  // Fetch patient data
+  useEffect(() => {
+    if (!patientId) {
+      setError("No patient selected.");
+      setLoading(false);
+      return;
+    }
+
+    const fetchPatientData = async () => {
+      try {
+        console.log("Fetching patient data...");
+        const response = await fetch(`https://biliard-backend.dundorma.dev/patients/${patientId}`, {
+          method: 'GET',
+          redirect: 'follow'
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        setPatientData(data);
+        console.log("Patient data fetched:", data);
+      } catch (err) {
+        console.error('Error fetching patient data:', err);
+        setError('Failed to fetch patient data.');
       }
-  
-      const fetchPatientData = async () => {
-        try {
-          console.log("Fetching records data...");
-          const response = await fetch(`https://biliard-backend.dundorma.dev/patients/${patientId}`, {
-            method: 'GET',
-            redirect: 'follow'
-          });
-  
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-  
-          const data = await response.json();
-          setPatientData(data);
-          console.log("Patient data fetched:", data);
-        } catch (err) {
-          console.error('Error fetching patient data:', err);
-          setError('Failed to fetch patient data.');
+    };
+
+    fetchPatientData();
+  }, [patientId]);
+
+  // Fetch records data with interval
+  useEffect(() => {
+    if (!patientId) return;
+
+    let isMounted = true; // prevent state updates if component unmounts
+
+    const fetchRecordsData = async () => {
+      try {
+        console.log("Fetching records data...");
+        const response = await fetch(`https://biliard-backend.dundorma.dev/records/patient/${patientId}`, {
+          method: 'GET',
+          redirect: 'follow'
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
-      };
 
-      fetchPatientData();
-    }, [patientId]);
-
-    //Fetc records data with interval
-    useEffect(() => {
-      if (!patientId) return;
-
-      let isMounted = true; // prevent state updates if component unmounts
-  
-      const fetchRecordsData = async () => {
-        try {
-          console.log("Fetching records data...");
-          const response = await fetch(`https://biliard-backend.dundorma.dev/records/patient/${patientId}`, {
-            method: 'GET',
-            redirect: 'follow'
-          });
-  
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-  
-          const data = await response.json();
-          if (isMounted) {
-            setRecordsData(data);
-            console.log("Records data fetched:", data);
-          }
-        } catch (err) {
-          console.error('Error fetching records data:', err);
-          if (isMounted) {
-            setError('Failed to fetch records data.');
-          }
-        } finally {
-          if (isMounted) {
-            setLoading(false);
-          }
+        const data = await response.json();
+        if (isMounted) {
+          setRecordsData(data);
+          console.log("Records data fetched:", data);
         }
-      };
+      } catch (err) {
+        console.error('Error fetching records data:', err);
+        if (isMounted) {
+          setError('Failed to fetch records data.');
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
 
-      // Initial fetch
+    // Initial fetch
+    fetchRecordsData();
+
+    // Set up interval
+    const intervalId = setInterval(() => {
       fetchRecordsData();
+    }, 3000);
 
-      // Set up interval
-      const intervalId = setInterval(() => {
-        fetchRecordsData();
-      }, 3000);
+    // Cleanup on unmount
+    return () => {
+      isMounted = false;
+      clearInterval(intervalId);
+    };
+  }, [patientId]);   
 
-      // Cleanup on unmount
-      return () => {
-        isMounted = false;
-        clearInterval(intervalId);
-      };
-    }, [patientId]);    
-
+    // Generate weeks based on records data
     useEffect(() => {
       if (recordsData.length > 0) {
-        // Urutkan data berdasarkan tanggal
-        const sortedRecords = recordsData.sort((a, b) => dayjs(a.test_date).isBefore(dayjs(b.test_date)) ? -1 : 1);
-        const startDate = dayjs(sortedRecords[0].test_date).startOf('week'); // Mulai dari hari Minggu
-        const endDate = dayjs(sortedRecords[sortedRecords.length - 1].test_date).endOf('week'); // Sampai hari Sabtu
+        // Sort data by date
+        const sortedRecords = [...recordsData].sort((a, b) =>
+          dayjs(a.test_date).isBefore(dayjs(b.test_date)) ? -1 : 1
+        );
+        const startDate = dayjs(sortedRecords[0].test_date).startOf('week'); 
+        const endDate = dayjs(sortedRecords[sortedRecords.length - 1].test_date).endOf('week'); 
   
         const generatedWeeks = [];
         let currentStart = startDate;
@@ -131,46 +165,38 @@ export default function WeeklyReport() {
         }
   
         setWeeks(generatedWeeks);
-        setSelectedWeek(generatedWeeks[generatedWeeks.length - 1]); // Set default selectedWeek to the latest week
-      }
-    }, [recordsData]);
-
-    // const filteredRecordsData = selectedWeek
-    // ? recordsData.filter(record => {
-    //     const testDate = dayjs(record.test_date);
-    //     return testDate.isAfter(selectedWeek.start.subtract(1, 'day')) && testDate.isBefore(selectedWeek.end.add(1, 'day'));
-    //   })
-    // : recordsData;
-
-    const getBilirubinStatus = (bilirubinLevel, testDate) => {
-      const ageInHours = dayjs(testDate).diff(dayjs(patientData.birth_date), 'hour');
-    
-      if (ageInHours <= 24 && bilirubinLevel < 5) {
-        return "Normal";
-      } else if (ageInHours > 24 && ageInHours <= 48 && bilirubinLevel < 10) {
-        return "Normal";
-      } else if (ageInHours > 48 && ageInHours <= 72 && bilirubinLevel < 12) {
-        return "Normal";
-      } else if (ageInHours > 72 && bilirubinLevel < 15) {
-        return "Normal";
-      } else {
-        return "Melebihi batas normal";
-      }
-    };
   
-    // change data records format for Recharts
-    const formatRecordsData = (data) => {
-      return data.map(record => ({
-        timestamp: dayjs(record.test_date).format("DD MMM HH:mm"),
-        date: dayjs(record.test_date).format("DD MMM"),  
-        bilirubin: record.bilirubin,
-        heartRate: record.heart_rate,
-        oxygenSaturation: record.oxygen,
-        bilirubinStatus: getBilirubinStatus(record.bilirubin, record.test_date)
-      }));
-    };
-  
-    const formattedRecordsData = formatRecordsData(recordsData);
+        // check if selectedWeek valid
+        if (
+          !selectedWeek ||
+          !generatedWeeks.some(week => week.label === selectedWeek.label)
+        ) {
+          setSelectedWeek(generatedWeeks[generatedWeeks.length - 1]); // Set default to the latest week
+        }
+      }
+    }, [recordsData, selectedWeek]);
+
+  // Set default selectedWeek when weeks are first generated
+  useEffect(() => {
+    if (weeks.length > 0 && !selectedWeek) {
+      setSelectedWeek(weeks[weeks.length - 1]); // Set default to the latest week
+    }
+  }, [weeks, selectedWeek]);
+
+  // Filtered data based on selected week
+  const filteredRecordsData = useMemo(() => {
+    if (!selectedWeek) return [];
+    return recordsData.filter(record => {
+      const testDate = dayjs(record.test_date);
+      return (
+        testDate.isAfter(selectedWeek.start.subtract(1, 'day')) &&
+        testDate.isBefore(selectedWeek.end.add(1, 'day'))
+      );
+    });
+  }, [recordsData, selectedWeek]);
+
+     // Format data for Recharts
+    const formattedRecordsData = useMemo(() => formatRecordsData(filteredRecordsData), [filteredRecordsData]);
   
     if (loading) {
       return (
@@ -202,11 +228,17 @@ export default function WeeklyReport() {
       return highReadings === 0 ? "normal" : "melebihi rentang normal";
     };
   
-    // count average, min and max bilirubin
-    const averageBilirubin = formattedRecordsData.reduce((acc, curr) => acc + curr.bilirubin, 0) / formattedRecordsData.length;
-    const maxBilirubin = Math.max(...formattedRecordsData.map(d => d.bilirubin));
-    const minBilirubin = Math.min(...formattedRecordsData.map(d => d.bilirubin));
-  
+  // count average, min and max bilirubin
+  const averageBilirubin = filteredRecordsData.length > 0
+    ? filteredRecordsData.reduce((acc, curr) => acc + curr.bilirubin, 0) / filteredRecordsData.length
+    : 0;
+  const maxBilirubin = filteredRecordsData.length > 0
+    ? Math.max(...filteredRecordsData.map(d => d.bilirubin))
+    : 0;
+  const minBilirubin = filteredRecordsData.length > 0
+    ? Math.min(...filteredRecordsData.map(d => d.bilirubin))
+    : 0;
+
     const summaryText = (
       <>
         <p>
@@ -221,8 +253,8 @@ export default function WeeklyReport() {
   return (
     <main className="flex min-h-screen flex-col bg-white items-center">
       <Navbar2></Navbar2>
-      <div className="flex w-full px-6 md:px-16 mt-4 md:mt-6 items-start justify-start">
-        <div className="text-darkgreen text-lg md:text-2xl font-bold">Weekly Report</div>
+      <div className="flex w-full px-6 md:px-16 mt-5 md:mt-7 items-start justify-start mb-1 md:mb-3">
+        <div className="text-darkgreen text-lg md:text-2xl lg:text-3xl font-bold">Weekly Report</div>
       </div>
       <div className="line"></div>
 
@@ -231,12 +263,12 @@ export default function WeeklyReport() {
       </div> */}
 
       {/* Dropdown Periode */}
-      <div className="flex w-full px-6 md:px-16 my-4 items-center justify-start text-gray-400">
-        <div className="mr-3">
+      <div className="flex w-full px-6 md:px-16 my-7 items-center justify-start text-gray-400">
+        <div className="mr-3 text-md md:text-xl">
           Periode : 
         </div>
         <select
-          className="border border-gray-300 rounded-md p-2"
+          className="border border-gray-300 text-md md:text-xl rounded-md p-2"
           value={selectedWeek ? selectedWeek.label : ""}
           onChange={(e) => {
             const week = weeks.find(w => w.label === e.target.value);
@@ -308,7 +340,7 @@ export default function WeeklyReport() {
 
 
       {/* data & summary */}
-      <div className="flex flex-col lg:flex-row px-8 md:px-16 mt-6 mb-6 gap-5 md:gap-3.5">
+      <div className="flex flex-col lg:flex-row px-8 md:px-16 mt-12 mb-6 gap-5 md:gap-3.5">
         <DataCard 
           name={patientData.name} 
           birthDate={dayjs(patientData.birth_date).format("DD MMM YYYY")} 
